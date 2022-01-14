@@ -1,0 +1,87 @@
+###############################################################################
+## Stigmee: A 3D browser and decentralized social network.
+## Copyright 2021 Quentin Quadrat <lecrapouille@gmail.com>
+##
+## This file is part of Stigmee.
+##
+## Stigmee is free software: you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###############################################################################
+##
+## This is a modification of https://github.com/dsaltares/godot-wild-jam-18
+## Under the Apache-2.0 License. For more information see his blog at this link
+## https://saltares.com/continuous-delivery-pipeline-for-godot-and-itch.io/
+##
+###############################################################################
+
+name: Publish Stigmee project on itch.io from GitHub releases
+on:
+  workflow_dispatch:
+    branches:
+      - master
+      - dev-example
+
+jobs:
+  release_windows:
+    runs-on: ubuntu-latest
+    steps:
+      - name: download windows
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          file: stigmee-windows.zip
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      - name: release windows
+        uses: josephbmanley/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+          CHANNEL: windows
+          ITCH_GAME: stigmee
+          ITCH_USER: lecrapouille
+          PACKAGE: stigmee-windows.zip
+
+  release_linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: download linux
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          file: stigmee-linux.zip
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      - name: release linux
+        uses: josephbmanley/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+          CHANNEL: linux
+          ITCH_GAME: stigmee
+          ITCH_USER: lecrapouille
+          PACKAGE: stigmee-linux.zip
+
+  release_html5:
+    runs-on: ubuntu-latest
+    steps:
+      - name: download html5
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          file: stigmee-html5.zip
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      - name: release html5
+        uses: josephbmanley/butler-publish-itchio-action@master
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+          CHANNEL: html5
+          ITCH_GAME: stigmee
+          ITCH_USER: lecrapouille
+          PACKAGE: stigmee-html5.zip
