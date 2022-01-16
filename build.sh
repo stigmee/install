@@ -338,7 +338,7 @@ function compile_stigmee
          exit 1
      fi
 
-     STIGMEE_ALIAS=$WORKSPACE_STIGMEE/$STIGMEE_BIN
+     STIGMEE_ALIAS=$WORKSPACE_STIGMEE/stigmee-$TARGET
      $GODOT_EDITOR_ALIAS --export "$EXPORT_CMD" $STIGMEE_BUILD_PATH/$STIGMEE_BIN
      if [ ! -L $STIGMEE_ALIAS ] || [ ! -e $STIGMEE_ALIAS ]; then
         ln -s $STIGMEE_BUILD_PATH/$STIGMEE_BIN $STIGMEE_ALIAS
