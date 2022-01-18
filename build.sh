@@ -226,7 +226,11 @@ function compile_prebuilt_cef
          VERBOSE=1 make -j$NPROC cefsimple
      fi
     )
+}
 
+### Copy CEF assets to Stigmee build folder
+function install_cef_assets
+{
     ### For Mac OS X rename cef_sandbox.a to libcef_sandbox.a since Scons search for lib*
     if [[ "$OSTYPE" == "darwin"* ]]; then
         (cd $CEF_PATH/Debug && cp cef_sandbox.a libcef_sandbox.a)
@@ -352,6 +356,7 @@ install_prerequisite
 compile_godot_cpp
 compile_godot_editor
 compile_prebuilt_cef
+install_cef_assets
 compile_godot_cef
 compile_cef_process
 compile_stigmark
