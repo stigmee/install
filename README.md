@@ -40,11 +40,14 @@ application and to export (aka compiling) Stigmee binaries.
 ## Compile Stigmee for Windows
 
 To compile Stigmee for Windows, (only in release mode for now) :
+- Ensure VS2022 is installed
+- Open an **x64 Native Tools Command Prompt for VS 2022**, with **Administrator** privilege (this should be available in the start menu under Visual Studio 2022). This ensures the environment is correctly set to use the VS tools.
+- Run the below commands from this command line :
 
 ```bash
 set WORKSPACE_STIGMEE=<workspace_home>
 cd <workspace_home>
-./build_win.bat
+build_win.bat
 ```
 
 **Note:** The following files are used for the Windows build: `checkenv.py`, `libcef_dll_wrapper_cmake` and `cef_variables_cmake`.
