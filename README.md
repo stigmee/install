@@ -5,9 +5,9 @@
 First, please read and follow instruction depicted in this [repository](https://github.com/stigmee/manifest).
 For example be sure this variable `$WORKSPACE_STIGMEE` is defined.
 
-## Compile Stigmee
+## Compile Stigmee for Unix systems
 
-To compile Stigmee, for Linux and MacOS X (but not for Windows yet), either in debug mode:
+To compile Stigmee for Linux (BSD untested) and MacOS X, either in debug mode:
 
 ```bash
 ./build.sh debug
