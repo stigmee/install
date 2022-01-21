@@ -44,6 +44,7 @@ if exist "%CEF_PATH%/Release/libcef.dll" (
     echo [45m Downloading CEF automated build... [0m 
     mkdir %GDCEF_THIRDPARTY_PATH%
     cd %GDCEF_THIRDPARTY_PATH%
+	rmdir /Q /S cef_binary
     curl -o cef.tar.bz2 %WEBSITE%/%CEF_TARBALL%
     tar -xf cef.tar.bz2
 	echo [45m Extracted CEF [0m 
