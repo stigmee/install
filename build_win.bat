@@ -69,23 +69,37 @@ cmake -DCMAKE_BUILD_TYPE=Release .
 echo [45m Minimal build... [0m 
 cmake --build . --config Release 2> nul
 
-
-echo [42m Installing CEF to %STIGMEE_BUILD_PATH%...[0m 
-
+echo [45m Installing CEF libs - build : %STIGMEE_BUILD_PATH%...[0m 
 echo [93m %CEF_PATH%/Release [v8_context_snapshot.bin icudtl.dat *.pak *.dll] [0m into [94m %STIGMEE_BUILD_PATH% [0m 
-robocopy /NFL /NDL /NJH /nc /ns /np "%CEF_PATH%/Release" "%STIGMEE_BUILD_PATH%" v8_context_snapshot.bin *.dll
+robocopy /NFL /NDL /NJH /NJS /nc /ns /np "%CEF_PATH%/Release" "%STIGMEE_BUILD_PATH%" v8_context_snapshot.bin *.dll
 mkdir "%STIGMEE_BUILD_PATH%/locales"
 echo [93m %CEF_PATH%/Resources [*.dat *.pak] [0m into [94m %STIGMEE_BUILD_PATH% [0m 
-robocopy /NFL /NDL /NJH /nc /ns /np "%CEF_PATH%/Resources" "%STIGMEE_BUILD_PATH%" *.pak *.dat
+robocopy /NFL /NDL /NJH /NJS /nc /ns /np "%CEF_PATH%/Resources" "%STIGMEE_BUILD_PATH%" *.pak *.dat
 echo [93m %CEF_PATH%/Resources/locales [*.*] [0m into [94m %STIGMEE_BUILD_PATH%/locales [0m 
-robocopy /NFL /NDL /NJH /nc /ns /np "%CEF_PATH%/Resources/locales" "%STIGMEE_BUILD_PATH%/locales" *.*
+robocopy /NFL /NDL /NJH /NJS /nc /ns /np "%CEF_PATH%/Resources/locales" "%STIGMEE_BUILD_PATH%/locales" *.*
+
+echo [45m Installing CEF libs - editor : %GODOT_EDITOR_BIN_PATH%...[0m 
+echo [93m %CEF_PATH%/Release [v8_context_snapshot.bin icudtl.dat *.pak *.dll] [0m into [94m %GODOT_EDITOR_BIN_PATH% [0m 
+robocopy /NFL /NDL /NJH /NJS /nc /ns /np "%CEF_PATH%/Release" "%GODOT_EDITOR_BIN_PATH%" v8_context_snapshot.bin *.dll
+mkdir "%GODOT_EDITOR_BIN_PATH%/locales"
+echo [93m %CEF_PATH%/Resources [*.dat *.pak] [0m into [94m %GODOT_EDITOR_BIN_PATH% [0m 
+robocopy /NFL /NDL /NJH /NJS /nc /ns /np "%CEF_PATH%/Resources" "%GODOT_EDITOR_BIN_PATH%" *.pak *.dat
+echo [93m %CEF_PATH%/Resources/locales [*.*] [0m into [94m %GODOT_EDITOR_BIN_PATH%/locales [0m 
+robocopy /NFL /NDL /NJH /NJS /nc /ns /np "%CEF_PATH%/Resources/locales" "%GODOT_EDITOR_BIN_PATH%/locales" *.*
 
 echo [42m Compiling libgdcef.dll: [0m 
 cd %GDCEF_PATH%
 scons platform=windows target=release --jobs=8
-echo [42m Compiling cefSubProcess.exe: [0m 
+echo [45m Installing libgdcef.dll - editor : %GODOT_EDITOR_BIN_PATH%...[0m 
+echo [93m %STIGMEE_BUILD_PATH% [libgdcef.dll] [0m into [94m %GODOT_EDITOR_BIN_PATH% [0m 
+robocopy /NFL /NDL /NJH /NJS /nc /ns /np "%STIGMEE_BUILD_PATH%" "%GODOT_EDITOR_BIN_PATH%" libgdcef.dll
+
+echo [42m Compiling gdcefSubProcess.exe: [0m 
 cd %GDCEF_PROCESSES_PATH%
 scons platform=windows target=release --jobs=8
+echo [45m Installing gdcefSubProcess.exe - editor : %GODOT_EDITOR_BIN_PATH%...[0m 
+echo [93m %STIGMEE_BUILD_PATH% [gdcefSubProcess.exe] [0m into [94m %GODOT_EDITOR_BIN_PATH% [0m 
+robocopy /NFL /NDL /NJH /NJS /nc /ns /np "%STIGMEE_BUILD_PATH%" "%GODOT_EDITOR_BIN_PATH%" gdcefSubProcess.exe
 
 echo [42m Compiling Stigmark Client: [0m 
 cd %STIGMARK_GDNATIVE_PATH%
@@ -95,7 +109,9 @@ echo [42m Installing stigmark_client library as libstigmark_client.dll...[0m
 echo [93m %STIGMARK_GDNATIVE_PATH%/target/debug/ [stigmark_client.dll] [0m into [94m %STIGMEE_BUILD_PATH% [0m 
 robocopy /NFL /NDL /NJH /nc /ns /np %STIGMARK_GDNATIVE_PATH%/target/debug/ %STIGMEE_BUILD_PATH% stigmark_client.dll
 cd %STIGMEE_BUILD_PATH%
-del libstigmark_client.dll
+if exist "%STIGMEE_BUILD_PATH%/libstigmark_client.dll" (
+    del libstigmark_client.dll
+)
 echo renaming as libstigmark_client.dll (for gdnative usage)
 ren stigmark_client.dll libstigmark_client.dll
 echo [106m Great, all work done ![0m 
