@@ -2,3 +2,4 @@
 *.obj
 res/*.exe
 *.tar.bz2
+cef_binary

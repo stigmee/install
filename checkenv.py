@@ -6,6 +6,8 @@ import sys, getopt
 import platform
 import requests
 import hashlib
+import tarfile
+import copy
 
 CEF_WEBSITE="https://cef-builds.spotifycdn.com"
 
@@ -24,6 +26,33 @@ def fatal(error):
    print("", flush=True)
    print("[101m" + error + "![0m")
    sys.exit(2)
+
+def rmdir(top):
+   for root, dirs, files in os.walk(top, topdown=False):
+      for name in files:
+         os.remove(os.path.join(root, name))
+      for name in dirs:
+         os.rmdir(os.path.join(root, name))
+   os.rmdir(top)
+
+def unpack_file(tar_bz2_file_name, dest_dir):
+   with tarfile.open(tar_bz2_file_name) as f:
+      directories = []
+      root_dir = ""
+
+      for tarinfo in f:
+         if tarinfo.isdir() and root_dir == "":
+            root_dir = tarinfo.name
+
+         name = tarinfo.name.replace(root_dir, dest_dir)
+         print("tarinfo %s" % name)
+
+         if tarinfo.isdir():
+            os.mkdir(name)
+            continue
+
+         tarinfo.name = name
+         f.extract(tarinfo, "")
 
 def compute_sha1(file_name):
    sha1 = hashlib.sha1()
@@ -78,7 +107,7 @@ def main_windows():
 def main(argv):
    ws = None
    try:
-      opts, args = getopt.getopt(argv,"hw:", ["workspace", "ws"])
+      opts, args = getopt.getopt(argv,"hw:", ["workspace", "ws", "remove-cef-dir"])
    except getopt.GetoptError:
       usage()
       sys.exit(1)
@@ -88,22 +117,31 @@ def main(argv):
          sys.exit(1)
       elif opt in ("-w", "--workspace", "--ws"):
          ws = arg         
+      elif opt in ("--remove-cef-dir"):
+         try:
+            rmdir("cef_binary")
+         except OSError as error:
+            fatal(error.strerror)
    system = platform.system()
    print("Operating system: " + system)
    main_common(ws)
    if system == "Windows":
       main_windows()
 
-      # download file
-      if os.path.isfile(CEF_WIN64_FILE) == False:
-         download_file(CEF_WEBSITE+"/"+CEF_WIN64_TARBALL, CEF_WIN64_FILE)
+      if os.path.isdir("cef_binary") == False:
+         # download file
+         if os.path.isfile(CEF_WIN64_FILE) == False:
+            download_file(CEF_WEBSITE+"/"+CEF_WIN64_TARBALL, CEF_WIN64_FILE)
+         else:
+            print("%s is already downloaded" % CEF_WIN64_FILE)
+         print("computing %s SHA1" % CEF_WIN64_FILE)
+         hash = compute_sha1(CEF_WIN64_FILE)
+         if hash != CEF_WIN64_SHA1:
+            fatal("%s: invalid hash: remove it and try again" % CEF_WIN64_SHA1)
+         print("Hash is ok. Unpacking ...")
+         unpack_file(CEF_WIN64_FILE, "cef_binary")
       else:
-         print("%s is already downloaded" % CEF_WIN64_FILE)
-      print("computing %s SHA1" % CEF_WIN64_FILE)
-      hash = compute_sha1(CEF_WIN64_FILE)
-      if hash != CEF_WIN64_SHA1:
-         fatal("%s: invalid hash: remove it and try again" % CEF_WIN64_SHA1)
-      print("Hash is ok. Unpacking ...")
+         print("Found cef_binary directory. If not ok, please restart with --remove-cef-dir")
 
 if __name__ == "__main__":
    main(sys.argv[1:])
