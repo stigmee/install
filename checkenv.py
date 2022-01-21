@@ -131,7 +131,7 @@ def main(argv):
       # main_windows()
 
       cef_directory = WORKSPACE_STIGMEE+"/godot/gdnative/browser/thirdparty/cef_binary"
-      if rmdir_cef_binary:
+      if rmdir_cef_binary and os.path.isdir(cef_directory):
          rmdir(cef_directory)
       if os.path.isfile(cef_directory + "/README.txt") == False:
          # download file
