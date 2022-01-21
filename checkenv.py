@@ -45,7 +45,7 @@ def unpack_file(tar_bz2_file_name, dest_dir):
             root_dir = tarinfo.name
 
          name = tarinfo.name.replace(root_dir, dest_dir)
-         print("tarinfo %s" % name)
+         print(" - %s" % name)
 
          if tarinfo.isdir():
             os.mkdir(name)
