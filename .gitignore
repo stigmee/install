@@ -1,4 +1,4 @@
 *~
-cef.tar.bz2
-win.obj
-res/win.exe
+*.obj
+res/*.exe
+*.tar.bz2
