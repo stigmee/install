@@ -89,6 +89,7 @@ def main_common(WORKSPACE_STIGMEE = None):
 
    # todo check if directories are Ok
    print("common: ok")
+   return WORKSPACE_STIGMEE
 
 def main_windows():
    res1 = os.system("cl.exe /Fe:res\win.exe res\win.cc")
@@ -106,6 +107,7 @@ def main_windows():
    
 def main(argv):
    ws = None
+   rmdir_cef_binary = False
    try:
       opts, args = getopt.getopt(argv,"hw:", ["workspace", "ws", "remove-cef-dir"])
    except getopt.GetoptError:
@@ -119,16 +121,19 @@ def main(argv):
          ws = arg         
       elif opt in ("--remove-cef-dir"):
          try:
-            rmdir("cef_binary")
+            rmdir_cef_binary = True
          except OSError as error:
             fatal(error.strerror)
    system = platform.system()
    print("Operating system: " + system)
-   main_common(ws)
+   WORKSPACE_STIGMEE = main_common(ws)
    if system == "Windows":
-      main_windows()
+      # main_windows()
 
-      if os.path.isdir("cef_binary") == False:
+      cef_directory = WORKSPACE_STIGMEE+"/godot/gdnative/browser/thirdparty/cef_binary"
+      if rmdir_cef_binary:
+         rmdir(cef_directory)
+      if os.path.isfile(cef_directory + "/README.txt") == False:
          # download file
          if os.path.isfile(CEF_WIN64_FILE) == False:
             download_file(CEF_WEBSITE+"/"+CEF_WIN64_TARBALL, CEF_WIN64_FILE)
@@ -139,9 +144,9 @@ def main(argv):
          if hash != CEF_WIN64_SHA1:
             fatal("%s: invalid hash: remove it and try again" % CEF_WIN64_SHA1)
          print("Hash is ok. Unpacking ...")
-         unpack_file(CEF_WIN64_FILE, "cef_binary")
+         unpack_file(CEF_WIN64_FILE, cef_directory)
       else:
-         print("Found cef_binary directory. If not ok, please restart with --remove-cef-dir")
+         print("Found cef_binary directory: %s\nIf not ok, please restart with --remove-cef-dir" % cef_directory)
 
 if __name__ == "__main__":
    main(sys.argv[1:])

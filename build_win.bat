@@ -45,9 +45,10 @@ if exist "%CEF_PATH%/Release/libcef.dll" (
     mkdir thirdparty
     cd %GDCEF_THIRDPARTY_PATH%
     echo [45m Downloading CEF automated build... [0m 
-	rmdir /Q /S cef_binary
-    curl -o cef.tar.bz2 %WEBSITE%/%CEF_TARBALL%
-    tar -xf cef.tar.bz2
+	REM rmdir /Q /S cef_binary
+    REM curl -o cef.tar.bz2 %WEBSITE%/%CEF_TARBALL%
+    REM tar -xf cef.tar.bz2
+    python "%SCRIPT_PATH%/checkenv.py" --remove-cef-dir
 	echo [45m Extracted CEF [0m 
     for /F "tokens=* USEBACKQ" %%G in (`dir /b cef_binary_*`) do (
 	    echo renaming [93m %%G [0m into [94m cef_binary [0m 
