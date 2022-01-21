@@ -202,7 +202,7 @@ function compile_prebuilt_cef
         # https://cef-builds.spotifycdn.com/index.html
         msg "Downloading Chromium Embedded Framework v96 for archi $ARCHI to $CEF_PATH ..."
         WEBSITE=https://cef-builds.spotifycdn.com
-        CEF_TARBALL=cef_binary_96.0.14%2Bg28ba5c8%2Bchromium-96.0.4664.55_$ARCHI.tar.bz2
+        CEF_TARBALL=cef_binary_97.1.6%2Bg8961cdb%2Bchromium-97.0.4692.99_$ARCHI.tar.bz2
 
         # Download and simplify the folder name
         mkdir -p $GDCEF_THIRDPARTY_PATH
