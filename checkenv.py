@@ -8,17 +8,20 @@ import requests
 import hashlib
 
 CEF_WEBSITE="https://cef-builds.spotifycdn.com"
+
 CEF_WIN64_TARBALL="cef_binary_97.1.6%2Bg8961cdb%2Bchromium-97.0.4692.99_windows64.tar.bz2"
+# CEF_WIN64_TARBALL="cef_binary_97.1.5%2Bg2b00258%2Bchromium-97.0.4692.71_windows64.tar.bz2"
 CEF_WIN64_SHA1="61d5976efb76248ca86b71405f55d84cc9df199b"
 CEF_WIN64_FILE="cef_97.1.6.tar.bz2"
-# CEF_WIN64_TARBALL="cef_binary_97.1.5%2Bg2b00258%2Bchromium-97.0.4692.71_windows64.tar.bz2"
+# CEF_WIN64_FILE="cef_97.1.5.tar.bz2"
 
-BUF_SIZE=16384
+BUF_SIZE=1*1024*1024
 
 def usage():
-   print('checkenv.py [debug|release]')
+   print('checkenv.py [debug|release|clean]')
 
 def fatal(error):
+   print("", flush=True)
    print("[101m" + error + "![0m")
    sys.exit(2)
 
@@ -36,13 +39,13 @@ def download_file(url, dst):
    local_filename = url.split('/')[-1]
    with requests.get(url, stream=True) as r:
       r.raise_for_status()
-      with open(local_filename, 'wb') as f:
+      with open(dst, 'wb') as f:
          sum = 0
          for chunk in r.iter_content(chunk_size=BUF_SIZE): 
-            sum += 8192 # todo get size
-            print("downloaded %d bytes\r" % sum, end='')
+            sum += BUF_SIZE
+            print("downloading %s %d bytes\r" % (dst, sum), end='')
             f.write(chunk)
-   print("done                                            ")
+   print("%s downloaded                                            " % dst) # enough space to hide downloading message
    return local_filename   
 
 def main_common(WORKSPACE_STIGMEE = None):
@@ -51,8 +54,9 @@ def main_common(WORKSPACE_STIGMEE = None):
       if WORKSPACE_STIGMEE == None:
           fatal("WORKSPACE_STIGMEE is NOT set, please set it and retry")
 
+   print("checking %s directory" % WORKSPACE_STIGMEE)
    if os.path.isdir(WORKSPACE_STIGMEE) == False:
-      fatal("WORKSPACE_STIGMEE \"%s\" is NOT a valid directory, please set it and retry" % WORKSPACE_STIGMEE)
+      fatal("%s is NOT a valid directory" % WORKSPACE_STIGMEE)
 
    # todo check if directories are Ok
    print("common: ok")
@@ -98,7 +102,7 @@ def main(argv):
       print("computing %s SHA1" % CEF_WIN64_FILE)
       hash = compute_sha1(CEF_WIN64_FILE)
       if hash != CEF_WIN64_SHA1:
-         fatal("invalid hash")
+         fatal("%s: invalid hash: remove it and try again" % CEF_WIN64_SHA1)
       print("Hash is ok. Unpacking ...")
 
 if __name__ == "__main__":
