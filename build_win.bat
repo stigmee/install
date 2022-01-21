@@ -41,9 +41,10 @@ if exist "%CEF_PATH%/Release/libcef.dll" (
     echo [106m CEF libraries already present, continuing...[0m 
 ) else (
     echo [101m CEF libraries Missing ![0m
-    echo [45m Downloading CEF automated build... [0m 
-    mkdir %GDCEF_THIRDPARTY_PATH%
+	cd %CEF_GDNATIVE_PATH%
+    mkdir thirdparty
     cd %GDCEF_THIRDPARTY_PATH%
+    echo [45m Downloading CEF automated build... [0m 
 	rmdir /Q /S cef_binary
     curl -o cef.tar.bz2 %WEBSITE%/%CEF_TARBALL%
     tar -xf cef.tar.bz2
