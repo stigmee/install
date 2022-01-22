@@ -50,6 +50,27 @@ cd <workspace_home>
 build_win.bat
 ```
 
+It is also possible to compile a specific component like so :
+
+```bash
+build_win.bat cef_get
+```
+
+Using one of the below function flag :
+
+```bash
+set_env                  <== set all the environment variables (except WORKSPACE_STIGMEE)
+compile_godot_cpp        <== compile godot-cpp
+compile_godot_editor     <== compile the editor
+cef_get                  <== download and extract CEF at the appropriate location
+cef_patch                <== patch the cmake macro for CEF compilation
+cef_compile              <== compile thirdparty libcef_dll_wrapper
+cef_install              <== install the CEF libraries at the build location
+native_cef               <== compile libgdcef.dll
+native_cef_subprocess    <== compile gdcefSubProcess.exe
+native_stigmark          <== compile the stigmark client lib
+```
+
 **Note:** The following files are used for the Windows build: `checkenv.py`, `libcef_dll_wrapper_cmake` and `cef_variables_cmake`.
 The build script installs the compiled libraries into both the build directory (for final executable run) and the godot editor directory (mandatory for running cef from a development project). Also not that for the moment, the final Stigmee executable is not generated (this will be included soon)
 
