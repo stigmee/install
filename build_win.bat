@@ -1,6 +1,11 @@
 @echo off
 
-IF DEFINED WORKSPACE_STIGMEE (echo [106m WORKSPACE_STIGMEE IS defined, continuing...[0m) ELSE (echo [101m WORKSPACE_STIGMEE is NOT set, please set it and retry ![0m )
+IF DEFINED WORKSPACE_STIGMEE (
+    echo [106m WORKSPACE_STIGMEE IS defined, continuing...[0m
+) ELSE (
+    echo [101m WORKSPACE_STIGMEE is NOT set, please set it and retry ![0m 
+	exit /B 1
+)
 
 echo [42m Setting environment... [0m 
 
