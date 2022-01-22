@@ -70,12 +70,12 @@ def download_file(url, dst):
       r.raise_for_status()
       with open(dst, 'wb') as f:
          sum = 0
-         for chunk in r.iter_content(chunk_size=BUF_SIZE): 
+         for chunk in r.iter_content(chunk_size=BUF_SIZE):
             sum += BUF_SIZE
             print("downloading %s %d bytes\r" % (dst, sum), end='')
             f.write(chunk)
    print("%s downloaded                                            " % dst) # enough space to hide downloading message
-   return local_filename   
+   return local_filename
 
 def main_common(WORKSPACE_STIGMEE = None):
    if WORKSPACE_STIGMEE == None:
@@ -104,7 +104,7 @@ def main_windows():
       fatal("MS C++ compiler could not compile test program")
 
    print("windows: MS C++ Compiler OK")
-   
+
 def main(argv):
    ws = None
    rmdir_cef_binary = False
@@ -118,7 +118,7 @@ def main(argv):
          usage()
          sys.exit(1)
       elif opt in ("-w", "--workspace", "--ws"):
-         ws = arg         
+         ws = arg
       elif opt in ("--remove-cef-dir"):
          try:
             rmdir_cef_binary = True
