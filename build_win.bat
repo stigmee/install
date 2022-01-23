@@ -18,6 +18,7 @@ call:cef_install
 call:native_cef
 call:native_cef_subprocess
 call:native_stigmark
+call:compile_stigmee
 ) ELSE (
 call:%1
 )
@@ -62,6 +63,7 @@ EXIT /B %ERRORLEVEL%
     echo [42m [compile_godot_editor] Compiling Editor... [0m
     cd %GODOT_EDITOR_PATH%
     scons platform=windows --jobs=8
+	mklink "%GODOT_EDITOR_ALIAS%" "%GODOT_EDITOR_BIN_PATH%/godot.windows.tools.64.exe"
     EXIT /B 0
 
 :cef_get
@@ -160,3 +162,8 @@ EXIT /B %ERRORLEVEL%
     echo renaming as libstigmark_client.dll (for gdnative usage)
     ren stigmark_client.dll libstigmark_client.dll
     EXIT /B 0
+
+:compile_stigmee
+    cd %STIGMEE_PROJECT_PATH%
+    set STIGMEE_BIN=Stigmee.win.release.64.exe
+    %GODOT_EDITOR_ALIAS% --export "Windows Desktop" %STIGMEE_BUILD_PATH%/%STIGMEE_BIN%
