@@ -52,7 +52,7 @@ EXIT /B %ERRORLEVEL%
 
     set WEBSITE=https://cef-builds.spotifycdn.com
     set CEF_TARBALL=cef_binary_97.1.5%%2Bg2b00258%%2Bchromium-97.0.4692.71_windows64.tar.bz2
-
+    EXIT /B 0
 
 :compile_godot_cpp
     echo [42m [compile_godot_cpp] Compiling godot-cpp... [0m
