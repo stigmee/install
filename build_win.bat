@@ -20,6 +20,7 @@ call:native_cef_subprocess
 call:native_stigmark
 call:compile_stigmee
 ) ELSE (
+call:set_env
 call:%1
 )
 
