@@ -162,6 +162,8 @@ EXIT /B %ERRORLEVEL%
     )
     echo renaming as libstigmark_client.dll (for gdnative usage)
     ren stigmark_client.dll libstigmark_client.dll
+    cd %STIGMARK_GDNATIVE_PATH%/src-stigmarkmod
+    scons platform=windows target=release workspace=%WORKSPACE_STIGMEE% godot_version=%GODOT_VERSION% --jobs=8
     EXIT /B 0
 
 :compile_stigmee
