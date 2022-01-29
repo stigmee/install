@@ -253,49 +253,31 @@ function install_cef_assets
     fi
 }
 
-### Compile Godot CEF module named GDCef
-function compile_godot_cef
+### Common Scons common for all Godot modules
+function cef_scons_cmd
 {
-    msg "Compiling Godot CEF module (inside $GDCEF_PATH) ..."
-    (cd $GDCEF_PATH
-     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-         VERBOSE=1 scons platform=linux target=$GODOT_TARGET --jobs=$NPROC
-     elif [[ "$OSTYPE" == "freebsd"* ]]; then
-         VERBOSE=1 scons platform=linux target=$GODOT_TARGET --jobs=$NPROC
-     elif [[ "$OSTYPE" == "darwin"* ]]; then
-         ARCHI=`uname -m`
-         if [[ "$ARCHI" == "x86_64" ]]; then
-             VERBOSE=1 scons platform=osx arch=x86_64 target=$GODOT_TARGET --jobs=$NPROC
-         else
-             VERBOSE=1 scons platform=osx arch=arm64 target=$GODOT_TARGET --jobs=$NPROC
-         fi
-     elif [[ "$OSTYPE" == "msys"* ]]; then
-         VERBOSE=1 scons platform=windows target=$GODOT_TARGET --jobs=$NPROC
-     else
-         err "Unknown archi $$OSTYPE: I dunno how to compile CEF module primary process"
-         exit 1
-     fi
-    )
+    VERBOSE=1 scons workspace=$WORKSPACE_STIGMEE \
+    godot_version=$GODOT_VERSION target=$GODOT_TARGET --jobs=$NPROC \
+    arch=`uname -m` platform=$1
 }
 
-### Compile Godot CEF module named GDCef
-function compile_cef_process
+### Compile Godot CEF module named GDCef and its subprocess
+function compile_godot_cef
 {
-    msg "Compiling Godot CEF secondary process (inside $GDCEF_PROCESSES_PATH) ..."
-    (cd $GDCEF_PROCESSES_PATH
+    msg "Compiling Godot CEF module (inside $1) ..."
+
+    (cd $1
      if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-         VERBOSE=1 scons platform=linux target=$GODOT_TARGET --jobs=$NPROC
+         cef_scons_cmd "x11"
      elif [[ "$OSTYPE" == "freebsd"* ]]; then
-         VERBOSE=1 scons platform=linux target=$GODOT_TARGET --jobs=$NPROC
+         cef_scons_cmd "x11"
      elif [[ "$OSTYPE" == "darwin"* ]]; then
-         ARCHI=`uname -m`
-         if [[ "$ARCHI" == "x86_64" ]]; then
-             VERBOSE=1 scons platform=osx arch=x86_64 target=$GODOT_TARGET --jobs=$NPROC
-         else
-             VERBOSE=1 scons platform=osx arch=arm64 target=$GODOT_TARGET --jobs=$NPROC
-         fi
+         cef_scons_cmd "osx"
+     elif [[ "$OSTYPE" == "msys"* ]]; then
+         cef_scons_cmd "windows"
      else
-         VERBOSE=1 scons platform=windows target=$GODOT_TARGET --jobs=$NPROC
+         err "Unknown archi $OSTYPE: I dunno how to compile CEF module primary process"
+         exit 1
      fi
     )
 }
@@ -308,12 +290,15 @@ function compile_stigmark
     (cd $STIGMARK_GDNATIVE_PATH
      if [[ "$OSTYPE" == "linux-gnu"* || "$OSTYPE" == "freebsd"* || "$OSTYPE" == "msys"* ]]; then
         ./build-linux.sh
+        (cd src-stigmarkmod && cef_scons_cmd "x11")
         cp --verbose $LIB_STIGMARK.so $STIGMEE_BUILD_PATH
      elif [[ "$OSTYPE" == "darwin"* ]]; then
         ./build-macosx.sh
+        (cd src-stigmarkmod && cef_scons_cmd "osx")
         cp --verbose $LIB_STIGMARK.dylib $STIGMEE_BUILD_PATH
      else
         ./build-windows.cmd
+        (cd src-stigmarkmod && cef_scons_cmd "windows")
         cp --verbose $LIB_STIGMARK.dll $STIGMEE_BUILD_PATH
      fi
     )
@@ -369,8 +354,8 @@ compile_godot_cpp
 compile_godot_editor
 compile_prebuilt_cef
 install_cef_assets
-compile_godot_cef
-compile_cef_process
+compile_godot_cef "$GDCEF_PATH"
+compile_godot_cef "$GDCEF_PROCESSES_PATH"
 compile_stigmark
 compile_stigmee
 msg "Cool! Stigmee project compiled with success!"

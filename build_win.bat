@@ -132,7 +132,7 @@ EXIT /B %ERRORLEVEL%
 :native_cef
     echo [42m [native_cef] Compiling GDCef native module (libgdcef.dll)... [0m
     cd %GDCEF_PATH%
-    scons platform=windows target=release --jobs=8
+    scons platform=windows target=release workspace=%WORKSPACE_STIGMEE% godot_version=%GODOT_VERSION% --jobs=8
     rem echo [45m Installing libgdcef.dll - editor : %GODOT_EDITOR_BIN_PATH%...[0m
     rem echo [93m %STIGMEE_BUILD_PATH% [libgdcef.dll] [0m into [94m %GODOT_EDITOR_BIN_PATH% [0m
     rem robocopy /NFL /NDL /NJH /NJS /nc /ns /np "%STIGMEE_BUILD_PATH%" "%GODOT_EDITOR_BIN_PATH%" libgdcef.dll
@@ -142,7 +142,7 @@ EXIT /B %ERRORLEVEL%
 :native_cef_subprocess
     echo [42m [native_cef_subprocess] Compiling CEF sub-process executable (gdcefSubProcess.exe)... [0m
     cd %GDCEF_PROCESSES_PATH%
-    scons platform=windows target=release --jobs=8
+    scons platform=windows target=release workspace=%WORKSPACE_STIGMEE% godot_version=%GODOT_VERSION% --jobs=8
     rem echo [45m Installing gdcefSubProcess.exe - editor : %GODOT_EDITOR_BIN_PATH%...[0m
     rem echo [93m %STIGMEE_BUILD_PATH% [gdcefSubProcess.exe] [0m into [94m %GODOT_EDITOR_BIN_PATH% [0m
     rem robocopy /NFL /NDL /NJH /NJS /nc /ns /np "%STIGMEE_BUILD_PATH%" "%GODOT_EDITOR_BIN_PATH%" gdcefSubProcess.exe
