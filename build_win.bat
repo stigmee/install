@@ -57,7 +57,7 @@ EXIT /B %ERRORLEVEL%
 :compile_godot_cpp
     echo [42m [compile_godot_cpp] Compiling godot-cpp... [0m
     cd %GODOT_CPP_PATH%
-    scons platform=windows target=release --jobs=8
+    scons platform=windows target=release --jobs=8 || goto :error
     EXIT /B 0
 
 :compile_godot_editor
@@ -149,7 +149,8 @@ EXIT /B %ERRORLEVEL%
     EXIT /B 0
 
 :native_stigmark
-    echo [42m [native_stigmark] Compiling Stigmark Client (libstigmark_client.dll)... [0m
+    echo [42m [native_stigmark] Compiling Stigmark Module [0m
+    echo [45m [native_stigmark] Compiling Stigmark Rust Lib (libstigmark_client.dll)...[0m
     cd %STIGMARK_GDNATIVE_PATH%
     set LIB_STIGMARK=%STIGMARK_GDNATIVE_PATH%/target/debug/stigmark_client
     call build-windows.cmd
@@ -162,11 +163,28 @@ EXIT /B %ERRORLEVEL%
     )
     echo renaming as libstigmark_client.dll (for gdnative usage)
     ren stigmark_client.dll libstigmark_client.dll
+<<<<<<< Updated upstream
     cd %STIGMARK_GDNATIVE_PATH%/src-stigmarkmod
     scons platform=windows target=release workspace=%WORKSPACE_STIGMEE% godot_version=%GODOT_VERSION% --jobs=8
+=======
+	
+	echo [45m [native_stigmark] Compiling Stigmark GDNative library (libstigmark.dll)...[0m
+	cd %STIGMARK_GDNATIVE_PATH%/src-stigmarkmod
+	call build-win64.cmd
+>>>>>>> Stashed changes
     EXIT /B 0
 
 :compile_stigmee
     cd %STIGMEE_PROJECT_PATH%
     set STIGMEE_BIN=Stigmee.win.release.64.exe
     %GODOT_EDITOR_ALIAS% --export "Windows Desktop" %STIGMEE_BUILD_PATH%/%STIGMEE_BIN%
+<<<<<<< Updated upstream
+=======
+	EXIT /B 0
+	
+:error
+	echo Failed with error #%errorlevel%.
+	exit /b %errorlevel%
+	
+	
+>>>>>>> Stashed changes
