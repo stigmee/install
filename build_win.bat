@@ -164,5 +164,5 @@ EXIT /B %ERRORLEVEL%
 	EXIT /B 0
 	
 :error
-	echo Failed with error #%errorlevel%.
+	echo [101m Failed with error #%errorlevel% [0m
 	exit /b %errorlevel%
