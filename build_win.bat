@@ -163,28 +163,20 @@ EXIT /B %ERRORLEVEL%
     )
     echo renaming as libstigmark_client.dll (for gdnative usage)
     ren stigmark_client.dll libstigmark_client.dll
-<<<<<<< Updated upstream
     cd %STIGMARK_GDNATIVE_PATH%/src-stigmarkmod
     scons platform=windows target=release workspace=%WORKSPACE_STIGMEE% godot_version=%GODOT_VERSION% --jobs=8
-=======
 	
 	echo [45m [native_stigmark] Compiling Stigmark GDNative library (libstigmark.dll)...[0m
 	cd %STIGMARK_GDNATIVE_PATH%/src-stigmarkmod
 	call build-win64.cmd
->>>>>>> Stashed changes
     EXIT /B 0
 
 :compile_stigmee
     cd %STIGMEE_PROJECT_PATH%
     set STIGMEE_BIN=Stigmee.win.release.64.exe
     %GODOT_EDITOR_ALIAS% --export "Windows Desktop" %STIGMEE_BUILD_PATH%/%STIGMEE_BIN%
-<<<<<<< Updated upstream
-=======
 	EXIT /B 0
 	
 :error
 	echo Failed with error #%errorlevel%.
 	exit /b %errorlevel%
-	
-	
->>>>>>> Stashed changes
