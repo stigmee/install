@@ -77,9 +77,6 @@ EXIT /B %ERRORLEVEL%
         mkdir thirdparty
         cd %GDCEF_THIRDPARTY_PATH%
         echo [45m Downloading CEF automated build... [0m
-            REM rmdir /Q /S cef_binary
-        REM curl -o cef.tar.bz2 %WEBSITE%/%CEF_TARBALL%
-        REM tar -xf cef.tar.bz2
         python "%SCRIPT_PATH%/checkenv.py" --remove-cef-dir
             echo [45m Extracted CEF [0m
         for /F "tokens=* USEBACKQ" %%G in (`dir /b cef_binary_*`) do (
@@ -130,9 +127,6 @@ EXIT /B %ERRORLEVEL%
     echo [42m [native_cef_subprocess] Compiling CEF sub-process executable (gdcefSubProcess.exe)... [0m
     cd %GDCEF_PROCESSES_PATH%
     scons platform=windows target=release workspace=%WORKSPACE_STIGMEE% godot_version=%GODOT_VERSION% --jobs=8 || goto :error
-    rem echo [45m Installing gdcefSubProcess.exe - editor : %GODOT_EDITOR_BIN_PATH%...[0m
-    rem echo [93m %STIGMEE_BUILD_PATH% [gdcefSubProcess.exe] [0m into [94m %GODOT_EDITOR_BIN_PATH% [0m
-    rem robocopy /NFL /NDL /NJH /NJS /nc /ns /np "%STIGMEE_BUILD_PATH%" "%GODOT_EDITOR_BIN_PATH%" gdcefSubProcess.exe
     EXIT /B 0
 
 :native_stigmark
