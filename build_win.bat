@@ -24,7 +24,9 @@ call:set_env
 call:%1
 )
 
-echo [106m Great, all work done ![0m
+IF %ERRORLEVEL% == 0 ( 
+    echo [106m Great, all work done ![0m
+)
 cd %SCRIPT_PATH%
 EXIT /B %ERRORLEVEL%
 
@@ -101,9 +103,9 @@ EXIT /B %ERRORLEVEL%
 :cef_compile
     cd %CEF_PATH%
     echo [45m [cef_compile] Preparing the Release build... [0m
-    cmake -DCMAKE_BUILD_TYPE=Release .
+    cmake -DCMAKE_BUILD_TYPE=Release . || goto :error
     echo [45m Minimal build... [0m
-    cmake --build . --config Release 2> nul
+    cmake --build . --config Release 2> nul || goto :error
     EXIT /B 0
 
 :cef_install
@@ -134,7 +136,7 @@ EXIT /B %ERRORLEVEL%
     echo [45m [native_stigmark] Compiling Stigmark Rust Lib (libstigmark_client.dll)...[0m
     cd %STIGMARK_GDNATIVE_PATH%
     set LIB_STIGMARK=%STIGMARK_GDNATIVE_PATH%/target/debug/stigmark_client
-    call build-windows.cmd
+    call build-windows.cmd || goto :error
     echo [45m Installing stigmark_client library as libstigmark_client.dll...[0m
     echo [93m %STIGMARK_GDNATIVE_PATH%/target/debug/ [stigmark_client.dll] [0m into [94m %STIGMEE_BUILD_PATH% [0m
     robocopy /NFL /NDL /NJH /nc /ns /np %STIGMARK_GDNATIVE_PATH%/target/debug/ %STIGMEE_BUILD_PATH% stigmark_client.dll
@@ -152,10 +154,16 @@ EXIT /B %ERRORLEVEL%
     EXIT /B 0
 
 :compile_stigmee
+    echo [42m [compile_stigmee] Compiling Stigmark Module [0m
     cd %STIGMEE_PROJECT_PATH%
     set STIGMEE_BIN=Stigmee.win.release.64.exe
-    %GODOT_EDITOR_ALIAS% --export "Windows Desktop" %STIGMEE_BUILD_PATH%/%STIGMEE_BIN% || goto :error
-	EXIT /B 0
+    if exist "%GODOT_EDITOR_ALIAS%" (
+	    %GODOT_EDITOR_ALIAS% --export "Windows Desktop" %STIGMEE_BUILD_PATH%/%STIGMEE_BIN% || goto :error
+		EXIT /B 0
+	) else (
+        echo [101m Godot editor symlink is missing ! run 'build_win.bat compile_godot_editor' first.[0m
+		EXIT /B 1
+	)
 	
 :error
 	echo [101m Failed with error #%errorlevel% [0m
