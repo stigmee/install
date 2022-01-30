@@ -63,8 +63,8 @@ EXIT /B %ERRORLEVEL%
 :compile_godot_editor
     echo [42m [compile_godot_editor] Compiling Editor... [0m
     cd %GODOT_EDITOR_PATH%
-    scons platform=windows --jobs=8
-	mklink "%GODOT_EDITOR_ALIAS%" "%GODOT_EDITOR_BIN_PATH%/godot.windows.tools.64.exe"
+    scons platform=windows --jobs=8 || goto :error
+	mklink "%GODOT_EDITOR_ALIAS%" "%GODOT_EDITOR_BIN_PATH%/godot.windows.tools.64.exe" || goto :error
     EXIT /B 0
 
 :cef_get
@@ -118,31 +118,18 @@ EXIT /B %ERRORLEVEL%
     robocopy /NFL /NDL /NJH /NJS /nc /ns /np "%CEF_PATH%/Resources" "%STIGMEE_BUILD_PATH%" *.pak *.dat
     echo [93m %CEF_PATH%/Resources/locales [*.*] [0m into [94m %STIGMEE_BUILD_PATH%/locales [0m
     robocopy /NFL /NDL /NJH /NJS /nc /ns /np "%CEF_PATH%/Resources/locales" "%STIGMEE_BUILD_PATH%/locales" *.*
-
-    rem echo [45m Installing CEF libs - editor : %GODOT_EDITOR_BIN_PATH%...[0m
-    rem echo [93m %CEF_PATH%/Release [v8_context_snapshot.bin icudtl.dat *.pak *.dll] [0m into [94m %GODOT_EDITOR_BIN_PATH% [0m
-    rem robocopy /NFL /NDL /NJH /NJS /nc /ns /np "%CEF_PATH%/Release" "%GODOT_EDITOR_BIN_PATH%" v8_context_snapshot.bin *.dll
-    rem mkdir "%GODOT_EDITOR_BIN_PATH%/locales"
-    rem echo [93m %CEF_PATH%/Resources [*.dat *.pak] [0m into [94m %GODOT_EDITOR_BIN_PATH% [0m
-    rem robocopy /NFL /NDL /NJH /NJS /nc /ns /np "%CEF_PATH%/Resources" "%GODOT_EDITOR_BIN_PATH%" *.pak *.dat
-    rem echo [93m %CEF_PATH%/Resources/locales [*.*] [0m into [94m %GODOT_EDITOR_BIN_PATH%/locales [0m
-    rem robocopy /NFL /NDL /NJH /NJS /nc /ns /np "%CEF_PATH%/Resources/locales" "%GODOT_EDITOR_BIN_PATH%/locales" *.*
     EXIT /B 0
 
 :native_cef
     echo [42m [native_cef] Compiling GDCef native module (libgdcef.dll)... [0m
     cd %GDCEF_PATH%
-    scons platform=windows target=release workspace=%WORKSPACE_STIGMEE% godot_version=%GODOT_VERSION% --jobs=8
-    rem echo [45m Installing libgdcef.dll - editor : %GODOT_EDITOR_BIN_PATH%...[0m
-    rem echo [93m %STIGMEE_BUILD_PATH% [libgdcef.dll] [0m into [94m %GODOT_EDITOR_BIN_PATH% [0m
-    rem robocopy /NFL /NDL /NJH /NJS /nc /ns /np "%STIGMEE_BUILD_PATH%" "%GODOT_EDITOR_BIN_PATH%" libgdcef.dll
-
+    scons platform=windows target=release workspace=%WORKSPACE_STIGMEE% godot_version=%GODOT_VERSION% --jobs=8 || goto :error
     EXIT /B 0
 
 :native_cef_subprocess
     echo [42m [native_cef_subprocess] Compiling CEF sub-process executable (gdcefSubProcess.exe)... [0m
     cd %GDCEF_PROCESSES_PATH%
-    scons platform=windows target=release workspace=%WORKSPACE_STIGMEE% godot_version=%GODOT_VERSION% --jobs=8
+    scons platform=windows target=release workspace=%WORKSPACE_STIGMEE% godot_version=%GODOT_VERSION% --jobs=8 || goto :error
     rem echo [45m Installing gdcefSubProcess.exe - editor : %GODOT_EDITOR_BIN_PATH%...[0m
     rem echo [93m %STIGMEE_BUILD_PATH% [gdcefSubProcess.exe] [0m into [94m %GODOT_EDITOR_BIN_PATH% [0m
     rem robocopy /NFL /NDL /NJH /NJS /nc /ns /np "%STIGMEE_BUILD_PATH%" "%GODOT_EDITOR_BIN_PATH%" gdcefSubProcess.exe
@@ -154,7 +141,7 @@ EXIT /B %ERRORLEVEL%
     cd %STIGMARK_GDNATIVE_PATH%
     set LIB_STIGMARK=%STIGMARK_GDNATIVE_PATH%/target/debug/stigmark_client
     call build-windows.cmd
-    echo [42m Installing stigmark_client library as libstigmark_client.dll...[0m
+    echo [45m Installing stigmark_client library as libstigmark_client.dll...[0m
     echo [93m %STIGMARK_GDNATIVE_PATH%/target/debug/ [stigmark_client.dll] [0m into [94m %STIGMEE_BUILD_PATH% [0m
     robocopy /NFL /NDL /NJH /nc /ns /np %STIGMARK_GDNATIVE_PATH%/target/debug/ %STIGMEE_BUILD_PATH% stigmark_client.dll
     cd %STIGMEE_BUILD_PATH%
@@ -163,18 +150,17 @@ EXIT /B %ERRORLEVEL%
     )
     echo renaming as libstigmark_client.dll (for gdnative usage)
     ren stigmark_client.dll libstigmark_client.dll
-    cd %STIGMARK_GDNATIVE_PATH%/src-stigmarkmod
-    scons platform=windows target=release workspace=%WORKSPACE_STIGMEE% godot_version=%GODOT_VERSION% --jobs=8
 	
 	echo [45m [native_stigmark] Compiling Stigmark GDNative library (libstigmark.dll)...[0m
 	cd %STIGMARK_GDNATIVE_PATH%/src-stigmarkmod
-	call build-win64.cmd
+	scons platform=windows target=release workspace=%WORKSPACE_STIGMEE% godot_version=%GODOT_VERSION% --jobs=8 || goto :error
+    xcopy /y ..\..\..\..\stigmee\build\libstigmark.dll ..\src-stigmarkapp\bin\win64
     EXIT /B 0
 
 :compile_stigmee
     cd %STIGMEE_PROJECT_PATH%
     set STIGMEE_BIN=Stigmee.win.release.64.exe
-    %GODOT_EDITOR_ALIAS% --export "Windows Desktop" %STIGMEE_BUILD_PATH%/%STIGMEE_BIN%
+    %GODOT_EDITOR_ALIAS% --export "Windows Desktop" %STIGMEE_BUILD_PATH%/%STIGMEE_BIN% || goto :error
 	EXIT /B 0
 	
 :error
