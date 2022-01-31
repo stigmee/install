@@ -1,0 +1,51 @@
+###############################################################################
+## Stigmee: A 3D browser and decentralized social network.
+## Copyright 2021 Quentin Quadrat <lecrapouille@gmail.com>
+##
+## This file is part of Stigmee.
+##
+## Stigmee is free software: you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful, but
+## WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+## General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+###############################################################################
+
+name: Compile and release Stigmee on GitHub
+on:
+  workflow_dispatch:
+    branches:
+      - main
+
+jobs:
+  export_linux:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Installing Python3 packages
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3
+        python -m pip install scons
+        python -m pip install tsrc
+
+    - name: Cloning Stigmee project
+      run: |
+        git config --global url."https://${{ secrets.ACCESS_TOKEN }}@github.com/".insteadOf git@github.com:
+        export WORKSPACE_STIGMEE=$GITHUB_WORKSPACE/workspace_stigmee
+        mkdir -p $WORKSPACE_STIGMEE
+        cd $WORKSPACE_STIGMEE
+        tsrc init git@github.com:stigmee/manifest.git
+        tsrc sync
+
+    - name: Compiling Stigmee project in release mode
+      run: |
+        export WORKSPACE_STIGMEE=$GITHUB_WORKSPACE/workspace_stigmee
+        cd $WORKSPACE_STIGMEE
+        ./build_unix.sh release

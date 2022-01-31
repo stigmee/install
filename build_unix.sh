@@ -106,7 +106,8 @@ function install_prerequisite
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         sudo apt-get install build-essential yasm scons pkg-config libx11-dev \
              libxcursor-dev libxinerama-dev libgl1-mesa-dev libglu-dev \
-             libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev ninja-build
+             libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev ninja-build \
+             libgtk-3-dev
     elif [[ "$OSTYPE" == "freebsd"* ]]; then
         sudo pkg install py37-scons pkgconf xorg-libraries libXcursor libXrandr \
              libXi xorgproto libGLU alsa-lib pulseaudio yasm ninja-build
