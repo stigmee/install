@@ -304,6 +304,55 @@ function compile_stigmark
     )
 }
 
+### Download and install Godot export tempates
+function install_godot_templates
+{
+     msg "Downloading Godot templates ..."
+
+     # Check the folder in where templates shall be installed
+     TEMPLATES_PATH=
+     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+         TEMPLATES_PATH="$HOME/.local/share/godot/templates/"
+     elif [[ "$OSTYPE" == "freebsd"* ]]; then
+         TEMPLATES_PATH="$HOME/.local/share/godot/templates/"
+     elif [[ "$OSTYPE" == "darwin"* ]]; then
+         err "Unknown archi: darwin"
+         exit 1
+     else
+         err "Unknown archi: $OSTYPE"
+         exit 1
+     fi
+
+     # From "3.4.2-stable" separate "3.4.2" and "stable" we need
+     # both of them and convert the '-' to '.'
+     V=`echo $GODOT_VERSION | cut -d"-" -f1`
+     S=`echo $GODOT_VERSION | cut -d"-" -f2`
+     TEMPLATE_FOLDER_NAME="$V"
+     if [ ! -z "$S" ]; then
+          TEMPLATE_FOLDER_NAME+=".$S"
+     fi
+
+     # Download the tpz file (zip) if folder is not present
+     if [ ! -d "$TEMPLATES_PATH/$TEMPLATE_FOLDER_NAME" ]; then
+          msg "Downloading Godot templates into $TEMPLATES_PATH ..."
+
+          # Where to download the zip file
+          WEBSITE="https://downloads.tuxfamily.org/godotengine/$V"
+          TEMPLATES_TARBALL="Godot_v$GODOT_VERSION""_export_templates.tpz"
+
+          # Contrary to CEF we cannot unzip while downloading.
+          mkdir -p "$TEMPLATES_PATH"
+          (cd $TEMPLATES_PATH
+           wget -O templates-$GODOT_VERSION.zip $WEBSITE/$TEMPLATES_TARBALL
+           unzip templates-$GODOT_VERSION.zip
+           # In addition the folder name inside the zip is "templates" but
+           # shall be the Godot version: so rename it after and beware to
+           # convert the '-' to '.'
+           mv templates "$TEMPLATE_FOLDER_NAME"
+          )
+     fi
+}
+
 ### Create the Stigmee executable
 function compile_stigmee
 {
@@ -357,5 +406,6 @@ install_cef_assets
 compile_godot_cef "$GDCEF_PATH"
 compile_godot_cef "$GDCEF_PROCESSES_PATH"
 compile_stigmark
+install_godot_templates
 compile_stigmee
 msg "Cool! Stigmee project compiled with success!"
