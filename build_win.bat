@@ -143,6 +143,9 @@ EXIT /B %ERRORLEVEL%
     echo [45m Installing stigmark_client library as libstigmark_client.dll...[0m
     echo [93m %STIGMARK_GDNATIVE_PATH%/target/debug/ [stigmark_client.dll] [0m into [94m %STIGMEE_BUILD_PATH% [0m
     robocopy /NFL /NDL /NJH /nc /ns /np %STIGMARK_GDNATIVE_PATH%/target/debug/ %STIGMEE_BUILD_PATH% stigmark_client.dll
+	cd %STIGMARK_GDNATIVE_PATH%/target/debug/
+	copy /Y stigmark_client.dll libstigmark_client.dll
+	copy /Y stigmark_client.lib libstigmark_client.lib
     cd %STIGMEE_BUILD_PATH%
     if exist "%STIGMEE_BUILD_PATH%/libstigmark_client.dll" (
         del libstigmark_client.dll
