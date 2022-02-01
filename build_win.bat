@@ -18,6 +18,7 @@ call:cef_install
 call:native_cef
 call:native_cef_subprocess
 call:native_stigmark
+call:install_godot_templates
 call:compile_stigmee
 ) ELSE (
 call:set_env
@@ -38,7 +39,9 @@ EXIT /B %ERRORLEVEL%
     set SCRIPT_PATH=%WORKSPACE_STIGMEE%/packages/install
     set STIGMEE_PROJECT_PATH=%WORKSPACE_STIGMEE%/stigmee
     set STIGMEE_BUILD_PATH=%STIGMEE_PROJECT_PATH%/build
-    set GODOT_VERSION=3.4.2-stable
+	set GODOT_V=3.4.2
+	set GODOT_T=stable
+    set GODOT_VERSION=%GODOT_V%-%GODOT_T%
     set GODOT_ROOT_PATH=%WORKSPACE_STIGMEE%/godot/%GODOT_VERSION%
     set GODOT_CPP_PATH=%GODOT_ROOT_PATH%/cpp
     set GODOT_EDITOR_PATH=%GODOT_ROOT_PATH%/editor
@@ -66,7 +69,7 @@ EXIT /B %ERRORLEVEL%
     echo [42m [compile_godot_editor] Compiling Editor... [0m
     cd %GODOT_EDITOR_PATH%
     scons platform=windows --jobs=8 || goto :error
-	mklink "%GODOT_EDITOR_ALIAS%" "%GODOT_EDITOR_BIN_PATH%/godot.windows.tools.64.exe" || goto :error
+	mklink "%GODOT_EDITOR_ALIAS%" "%GODOT_EDITOR_BIN_PATH%/godot.windows.tools.64.exe"
     EXIT /B 0
 
 :cef_get
@@ -152,13 +155,29 @@ EXIT /B %ERRORLEVEL%
 	scons platform=windows target=release workspace=%WORKSPACE_STIGMEE% godot_version=%GODOT_VERSION% --jobs=8 || goto :error
     xcopy /y ..\..\..\..\stigmee\build\libstigmark.dll ..\src-stigmarkapp\bin\win64
     EXIT /B 0
+	
+:install_godot_templates
+    echo [42m [install_godot_templates] Instaling templates required for export [0m 
+	set TEMPLATE_PATH=%UserProfile%\AppData\Roaming\Godot\templates
+	set TEMPLATE_FOLDER_NAME=%GODOT_V%.%GODOT_T%
+	set TEMPLATE_WEBSITE=https://downloads.tuxfamily.org/godotengine/%GODOT_V%
+    set TEMPLATES_TARBALL=Godot_v%GODOT_VERSION%_export_templates.tpz
+	echo [45m Downloading Godot templates (%TEMPLATE_WEBSITE%/%TEMPLATES_TARBALL%)...[0m
+	if not exist "%TEMPLATE_PATH%" mkdir "%TEMPLATE_PATH%"
+	cd /D %TEMPLATE_PATH%
+    curl -o templates-%GODOT_VERSION%.zip %TEMPLATE_WEBSITE%/%TEMPLATES_TARBALL%
+	echo [45m Extracting ...[0m
+    tar -xf templates-%GODOT_VERSION%.zip
+	ren templates %TEMPLATE_FOLDER_NAME%
+	cd /D %SCRIPT_PATH%
+	EXIT /B 0
 
 :compile_stigmee
     echo [42m [compile_stigmee] Compiling Stigmark Module [0m
     cd %STIGMEE_PROJECT_PATH%
     set STIGMEE_BIN=Stigmee.win.release.64.exe
     if exist "%GODOT_EDITOR_ALIAS%" (
-	    %GODOT_EDITOR_ALIAS% --export "Windows Desktop" %STIGMEE_BUILD_PATH%/%STIGMEE_BIN% || goto :error
+	    %GODOT_EDITOR_ALIAS% --no-window --export "Windows Desktop" %STIGMEE_BUILD_PATH%/%STIGMEE_BIN% || goto :error
 		EXIT /B 0
 	) else (
         echo [101m Godot editor symlink is missing ! run 'build_win.bat compile_godot_editor' first.[0m
