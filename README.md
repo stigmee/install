@@ -28,6 +28,8 @@ Install the following tools: `g++`, `ninja`, `cmake` (greater or equal to 3.21.0
   - Visual Studio: https://visualstudio.microsoft.com/en/vs/
 
 You will have to install the following python3 modules: `tsrc` and `scons`.
+On Debian, Ubuntu you probably have to compile and install by yourself a newer version of CMake. You can follow this
+[bash script](https://github.com/stigmee/doc-internal/blob/master/doc/install_latest_cmake.sh).
 
 ## Set Stigmee's environment variables
 
