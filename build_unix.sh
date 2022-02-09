@@ -122,6 +122,14 @@ function install_prerequisite
         err "Unknown architecture $OSTYPE: I dunno what to install as system packages"
         exit 1
     fi
+
+    # Check if cmake version is >= 3.19
+    CMAKE_CURRENT_VERSION=`cmake --version | head -n1 | cut -d" " -f3`
+    CMAKE_MIN_VERSION="3.19"
+    if [ "$CMAKE_MIN_VERSION" = "`echo -e "$CMAKE_CURRENT_VERSION\n$CMAKE_MIN_VERSION" | sort -r -V | head -n1`" ]; then
+      err "Your CMake version is $CMAKE_CURRENT_VERSION but shall be >= $CMAKE_MIN_VERSION"
+      err "See $WORKSPACE_STIGMEE/doc/internal/doc/install_latest_cmake.sh to update it before running this script"
+    fi
 }
 
 ### Compile godot-cpp
