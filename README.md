@@ -48,6 +48,13 @@ export WORKSPACE_STIGMEE=/your/desired/path/for/workspace_stigmee
 set WORKSPACE_STIGMEE c:\workspace_stigmee
 ```
 
+**Linux Workaround:** For the moment Godot does not find correctly the libcef.so while indicated in the
+gdnlib file. So for the moment:
+
+```bash
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$WORKSPACE_STIGMEE/stigmee/build
+```
+
 ## Download Stigmee workspace
 
 For more information on how to keep your workspace up-to-date see this [document](https://github.com/stigmee/manifest). To initialize your workspace
