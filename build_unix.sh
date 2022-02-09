@@ -107,16 +107,16 @@ function install_prerequisite
         sudo apt-get install build-essential yasm scons pkg-config libx11-dev \
              libxcursor-dev libxinerama-dev libgl1-mesa-dev libglu-dev \
              libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev ninja-build \
-             libgtk-3-dev
+             libgtk-3-dev libssl-dev
     elif [[ "$OSTYPE" == "freebsd"* ]]; then
         sudo pkg install py37-scons pkgconf xorg-libraries libXcursor libXrandr \
-             libXi xorgproto libGLU alsa-lib pulseaudio yasm ninja-build
+             libXi xorgproto libGLU alsa-lib pulseaudio yasm ninja-build libssl-dev
     elif [[ "$OSTYPE" == "darwin"* ]]; then
-        brew install scons yasm cmake ninja
+        brew install scons yasm cmake ninja openssl
     elif [[ "$OSTYPE" == "msys"* ]]; then
         pacman -S --noconfirm --needed tar git make mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake \
                mingw-w64-x86_64-ninja mingw-w64-x86_64-python3-pip mingw-w64-x86_64-scons \
-               mingw-w64-x86_64-gcc
+               mingw-w64-x86_64-gcc openssl-devel
         python -m pip install scons
     else
         err "Unknown architecture $OSTYPE: I dunno what to install as system packages"
