@@ -4,6 +4,10 @@
 
 Stigmee can be compiled for Linux, Windows 10, and MacOS X. Stigmee is not yet working for MacOS X.
 
+For compiling Stigmee, you will need an operating system with > 2 Gb of RAM and > 14 Gb of free disk space.
+The Stigmee binary once compiled is ~300 Mb on your disk (plus the cache of visited pages) and need ~300 Mb
+of RAM when running.
+
 ## Prerequisites to compile Stigmee
 
 ### Repository manifest
