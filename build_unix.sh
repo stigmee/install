@@ -171,7 +171,7 @@ function compile_godot_editor
          else
              # Compile a Godot editor without X11 (godot --no-window does not
              # work with Linux but only on Windows)
-             scons -j$NPROC plateform=server
+             scons -j$NPROC plateform=server production=yes tools=yes
          fi
          if [ ! -L $GODOT_EDITOR_ALIAS ] || [ ! -e $GODOT_EDITOR_ALIAS ]; then
              ln -s $GODOT_EDITOR_BIN_PATH/godot.* $GODOT_EDITOR_ALIAS

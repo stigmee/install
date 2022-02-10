@@ -46,6 +46,7 @@ jobs:
 
     - name: Compiling Stigmee project in release mode
       run: |
+        export DISPLAY=":0"
         export WORKSPACE_STIGMEE=$GITHUB_WORKSPACE/workspace_stigmee
         cd $WORKSPACE_STIGMEE
         ./build_unix.sh release
