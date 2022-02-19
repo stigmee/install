@@ -55,7 +55,7 @@ EXIT /B %ERRORLEVEL%
     set CEF_PATH=%GDCEF_THIRDPARTY_PATH%/cef_binary
 
     set WEBSITE=https://cef-builds.spotifycdn.com
-    set CEF_TARBALL=cef_binary_97.1.5%%2Bg2b00258%%2Bchromium-97.0.4692.71_windows64.tar.bz2
+    set CEF_TARBALL=cef_binary_98.2.0%2Bg78c653a%2Bchromium-98.0.4758.102_windows64.tar.bz2
     EXIT /B 0
 
 :compile_godot_cpp

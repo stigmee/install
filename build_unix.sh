@@ -44,7 +44,7 @@ fi
 
 ### Third part versions
 GODOT_VERSION="3.4.2-stable"
-CEF_VERSION="97.1.6+g8961cdb+chromium-97.0.4692.99"
+CEF_VERSION="98.2.0+g78c653a+chromium-98.0.4758.102"
 
 ### Set pathes
 STIGMEE_PROJECT_PATH=$WORKSPACE_STIGMEE/stigmee

@@ -11,11 +11,9 @@ import copy
 
 CEF_WEBSITE="https://cef-builds.spotifycdn.com"
 
-CEF_WIN64_TARBALL="cef_binary_97.1.6%2Bg8961cdb%2Bchromium-97.0.4692.99_windows64.tar.bz2"
-# CEF_WIN64_TARBALL="cef_binary_97.1.5%2Bg2b00258%2Bchromium-97.0.4692.71_windows64.tar.bz2"
-CEF_WIN64_SHA1="61d5976efb76248ca86b71405f55d84cc9df199b"
-CEF_WIN64_FILE="cef_97.1.6.tar.bz2"
-# CEF_WIN64_FILE="cef_97.1.5.tar.bz2"
+CEF_WIN64_TARBALL="cef_binary_98.2.0%2Bg78c653a%2Bchromium-98.0.4758.102_windows64.tar.bz2"
+CEF_WIN64_SHA1="bbc7174a5cc9f848fa0e71f93ff1d124472b1a05"
+CEF_WIN64_FILE="cef_98.2.0.tar.bz2"
 
 BUF_SIZE=1*1024*1024
 
