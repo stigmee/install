@@ -270,7 +270,7 @@ function install_cef_assets
     fi
 }
 
-### Common Scons common for all Godot modules
+### Common Scons command for compiling our Godot modules
 function cef_scons_cmd
 {
     VERBOSE=1 scons workspace=$WORKSPACE_STIGMEE \
