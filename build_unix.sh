@@ -42,12 +42,15 @@ if [ -z "$WORKSPACE_STIGMEE" ]; then
     exit
 fi
 
+### Third part versions
+GODOT_VERSION="3.4.2-stable"
+CEF_VERSION="97.1.6+g8961cdb+chromium-97.0.4692.99"
+
 ### Set pathes
 
 STIGMEE_PROJECT_PATH=$WORKSPACE_STIGMEE/stigmee
 STIGMEE_BUILD_PATH=$STIGMEE_PROJECT_PATH/build
 
-GODOT_VERSION=3.4.2-stable
 GODOT_ROOT_PATH=$WORKSPACE_STIGMEE/godot/$GODOT_VERSION
 GODOT_CPP_PATH=$GODOT_ROOT_PATH/cpp
 GODOT_EDITOR_PATH=$GODOT_ROOT_PATH/editor
@@ -185,64 +188,79 @@ function compile_godot_editor
 function compile_prebuilt_cef
 {
     # Download and decompress if folder is not present
-    if [ ! -d $CEF_PATH ]; then
-        UNAMEM=`uname -m`
-        if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-            if [[ "$UNAMEM" == "x86_64" ]]; then
-                ARCHI="linux64"
-            else
-                ARCHI="linuxarm"
-            fi
-        elif [[ "$OSTYPE" == "freebsd"* ]]; then
-            if [[ "$UNAMEM" == "x86_64" ]]; then
-                ARCHI="linux64"
-            else
-                ARCHI="linuxarm"
-            fi
-        elif [[ "$OSTYPE" == "darwin"* ]]; then
-            if [[ "$UNAMEM" == "x86_64" ]]; then
-                ARCHI="macosx64"
-            else
-                ARCHI="macosarm64"
-            fi
-        elif [[ "$OSTYPE" == "msys"* ]]; then
-            if [[ "$UNAMEM" == "x86_64" ]]; then
-                ARCHI="windows64"
-            else
-                ARCHI="windowsarm64"
-            fi
+    UNAMEM=`uname -m`
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        if [[ "$UNAMEM" == "x86_64" ]]; then
+            ARCHI="linux64"
         else
-            err "Unknown archi $$OSTYPE: Cannot download Chromium Embedded Framework"
-            exit 1
+            ARCHI="linuxarm"
         fi
+    elif [[ "$OSTYPE" == "freebsd"* ]]; then
+        if [[ "$UNAMEM" == "x86_64" ]]; then
+            ARCHI="linux64"
+        else
+            ARCHI="linuxarm"
+        fi
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        if [[ "$UNAMEM" == "x86_64" ]]; then
+            ARCHI="macosx64"
+        else
+            ARCHI="macosarm64"
+        fi
+    elif [[ "$OSTYPE" == "msys"* ]]; then
+        if [[ "$UNAMEM" == "x86_64" ]]; then
+            ARCHI="windows64"
+        else
+            ARCHI="windowsarm64"
+        fi
+    else
+        err "Unknown archi $$OSTYPE: Cannot download Chromium Embedded Framework"
+        exit 1
+    fi
 
-        # https://cef-builds.spotifycdn.com/index.html
-        msg "Downloading Chromium Embedded Framework v96 for archi $ARCHI to $CEF_PATH ..."
-        WEBSITE=https://cef-builds.spotifycdn.com
-        CEF_TARBALL=cef_binary_97.1.6%2Bg8961cdb%2Bchromium-97.0.4692.99_$ARCHI.tar.bz2
-
-        # Download and simplify the folder name
-        mkdir -p $GDCEF_THIRDPARTY_PATH
+    # CEF already installed ? Installed with a different version ?
+    # Compare our desired version with the one stored in the CEF README
+    FOUND=`grep "$CEF_VERSION" "$CEF_PATH/README.txt" || echo ""`
+    if [ ! -z "$FOUND" ]; then
+        msg "Chromium Embedded Framework $CEF_VERSION already installed"
+    else
+        msg "Downloading Chromium Embedded Framework $CEF_VERSION $ARCHI to $CEF_PATH ..."
+        mkdir -p "$GDCEF_THIRDPARTY_PATH"
         (cd $GDCEF_THIRDPARTY_PATH
+         # Remove the CEF folder if exist and partial downloaded folder
+         rm -fr cef_binary* || echo ""
+
+         # Replace the '+' chars by URL percent encoding '%2B'
+         CEF_URL_VERSION=`echo "$CEF_VERSION" | sed -e 's/+/%2B/g'`
+         CEF_TARBALL="cef_binary_$CEF_URL_VERSION""_$ARCHI.tar.bz2"
+
+         # Download CEF at https://cef-builds.spotifycdn.com/index.html
+         # and untaring it at the same time
+         WEBSITE=https://cef-builds.spotifycdn.com
          wget -c $WEBSITE/$CEF_TARBALL -O- | tar -xj
+         sleep 1
+
+         # Simplify the folder name by removing the complex version number
          mv cef_binary* $CEF_PATH
         )
     fi
 
     ### Compile Chromium Embedded Framework if not already made
-    msg "Compiling Chromium Embedded Framework in $CEF_TARGET mode (inside $CEF_PATH) ..."
-    (cd $CEF_PATH
-     mkdir -p build
-     cd build
-     # Compile with ninja or make
-     if [ -x "$(which ninja)" ]; then
-         cmake -G "Ninja" -DCMAKE_BUILD_TYPE=$CEF_TARGET ..
-         VERBOSE=1 ninja -j$NPROC cefsimple
-     else
-         cmake -DCMAKE_BUILD_TYPE=$CEF_TARGET ..
-         VERBOSE=1 make -j$NPROC cefsimple
-     fi
-    )
+    if [ -d $CEF_PATH ]; then
+        msg "Compiling Chromium Embedded Framework in $CEF_TARGET mode (inside $CEF_PATH) ..."
+        (cd $CEF_PATH
+         mkdir -p build
+         cd build
+         # Compile with ninja or make
+         if [ -x "$(which ninja)" ]; then
+             cmake -G "Ninja" -DCMAKE_BUILD_TYPE=$CEF_TARGET ..
+             VERBOSE=1 ninja -j$NPROC cefsimple
+         else
+             cmake -DCMAKE_BUILD_TYPE=$CEF_TARGET ..
+             VERBOSE=1 make -j$NPROC cefsimple
+         fi
+        )
+    fi
 }
 
 ### Copy CEF assets to Stigmee build folder
