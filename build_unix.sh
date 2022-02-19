@@ -47,21 +47,17 @@ GODOT_VERSION="3.4.2-stable"
 CEF_VERSION="97.1.6+g8961cdb+chromium-97.0.4692.99"
 
 ### Set pathes
-
 STIGMEE_PROJECT_PATH=$WORKSPACE_STIGMEE/stigmee
 STIGMEE_BUILD_PATH=$STIGMEE_PROJECT_PATH/build
-
 GODOT_ROOT_PATH=$WORKSPACE_STIGMEE/godot/$GODOT_VERSION
 GODOT_CPP_PATH=$GODOT_ROOT_PATH/cpp
 GODOT_EDITOR_PATH=$GODOT_ROOT_PATH/editor
 GODOT_EDITOR_BIN_PATH=$GODOT_EDITOR_PATH/bin
 GODOT_EDITOR_ALIAS=$WORKSPACE_STIGMEE/godot-editor
-
 GODOT_GDNATIVE_PATH=$WORKSPACE_STIGMEE/godot/gdnative
 CEF_GDNATIVE_PATH=$GODOT_GDNATIVE_PATH/browser
 CEF_GODOT_EXAMPLE_BUILD=$CEF_GDNATIVE_PATH/example/build
 STIGMARK_GDNATIVE_PATH=$GODOT_GDNATIVE_PATH/stigmark
-
 GDCEF_PATH=$CEF_GDNATIVE_PATH/gdcef
 GDCEF_PROCESSES_PATH=$CEF_GDNATIVE_PATH/gdcef_subprocess
 GDCEF_THIRDPARTY_PATH=$CEF_GDNATIVE_PATH/thirdparty
@@ -131,8 +127,8 @@ function install_prerequisite
     CMAKE_CURRENT_VERSION=`cmake --version | head -n1 | cut -d" " -f3`
     CMAKE_MIN_VERSION="3.19"
     if [ "$CMAKE_MIN_VERSION" = "`echo -e "$CMAKE_CURRENT_VERSION\n$CMAKE_MIN_VERSION" | sort -r -V | head -n1`" ]; then
-      err "Your CMake version is $CMAKE_CURRENT_VERSION but shall be >= $CMAKE_MIN_VERSION"
-      err "See $WORKSPACE_STIGMEE/doc/internal/doc/install_latest_cmake.sh to update it before running this script"
+        err "Your CMake version is $CMAKE_CURRENT_VERSION but shall be >= $CMAKE_MIN_VERSION"
+        err "See $WORKSPACE_STIGMEE/doc/internal/doc/install_latest_cmake.sh to update it before running this script"
     fi
 }
 
@@ -292,8 +288,8 @@ function install_cef_assets
 function cef_scons_cmd
 {
     VERBOSE=1 scons workspace=$WORKSPACE_STIGMEE \
-    godot_version=$GODOT_VERSION target=$GODOT_TARGET --jobs=$NPROC \
-    arch=`uname -m` platform=$1
+           godot_version=$GODOT_VERSION target=$GODOT_TARGET --jobs=$NPROC \
+           arch=`uname -m` platform=$1
 }
 
 ### Compile Godot CEF module named GDCef and its subprocess
@@ -324,17 +320,17 @@ function compile_stigmark
     msg "Compiling Godot stigmark (inside $STIGMARK_GDNATIVE_PATH) ..."
     (cd $STIGMARK_GDNATIVE_PATH
      if [[ "$OSTYPE" == "linux-gnu"* || "$OSTYPE" == "freebsd"* || "$OSTYPE" == "msys"* ]]; then
-        ./build-linux.sh
-        (cd src-stigmarkmod && cef_scons_cmd "x11")
-        cp --verbose $LIB_STIGMARK.so $STIGMEE_BUILD_PATH
+         ./build-linux.sh
+         (cd src-stigmarkmod && cef_scons_cmd "x11")
+         cp --verbose $LIB_STIGMARK.so $STIGMEE_BUILD_PATH
      elif [[ "$OSTYPE" == "darwin"* ]]; then
-        ./build-macosx.sh
-        (cd src-stigmarkmod && cef_scons_cmd "osx")
-        cp --verbose $LIB_STIGMARK.dylib $STIGMEE_BUILD_PATH
+         ./build-macosx.sh
+         (cd src-stigmarkmod && cef_scons_cmd "osx")
+         cp --verbose $LIB_STIGMARK.dylib $STIGMEE_BUILD_PATH
      else
-        ./build-windows.cmd
-        (cd src-stigmarkmod && cef_scons_cmd "windows")
-        cp --verbose $LIB_STIGMARK.dll $STIGMEE_BUILD_PATH
+         ./build-windows.cmd
+         (cd src-stigmarkmod && cef_scons_cmd "windows")
+         cp --verbose $LIB_STIGMARK.dll $STIGMEE_BUILD_PATH
      fi
     )
 }
@@ -342,50 +338,50 @@ function compile_stigmark
 ### Download and install Godot export tempates
 function install_godot_templates
 {
-     msg "Downloading Godot templates ..."
+    msg "Downloading Godot templates ..."
 
-     # Check the folder in where templates shall be installed
-     TEMPLATES_PATH=
-     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-         TEMPLATES_PATH="$HOME/.local/share/godot/templates/"
-     elif [[ "$OSTYPE" == "freebsd"* ]]; then
-         TEMPLATES_PATH="$HOME/.local/share/godot/templates/"
-     elif [[ "$OSTYPE" == "darwin"* ]]; then
-         err "Unknown archi: darwin"
-         exit 1
-     else
-         err "Unknown archi: $OSTYPE"
-         exit 1
-     fi
+    # Check the folder in where templates shall be installed
+    TEMPLATES_PATH=
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        TEMPLATES_PATH="$HOME/.local/share/godot/templates/"
+    elif [[ "$OSTYPE" == "freebsd"* ]]; then
+        TEMPLATES_PATH="$HOME/.local/share/godot/templates/"
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        err "Unknown archi: darwin"
+        exit 1
+    else
+        err "Unknown archi: $OSTYPE"
+        exit 1
+    fi
 
-     # From "3.4.2-stable" separate "3.4.2" and "stable" we need
-     # both of them and convert the '-' to '.'
-     V=`echo $GODOT_VERSION | cut -d"-" -f1`
-     S=`echo $GODOT_VERSION | cut -d"-" -f2`
-     TEMPLATE_FOLDER_NAME="$V"
-     if [ ! -z "$S" ]; then
-          TEMPLATE_FOLDER_NAME+=".$S"
-     fi
+    # From "3.4.2-stable" separate "3.4.2" and "stable" we need
+    # both of them and convert the '-' to '.'
+    V=`echo $GODOT_VERSION | cut -d"-" -f1`
+    S=`echo $GODOT_VERSION | cut -d"-" -f2`
+    TEMPLATE_FOLDER_NAME="$V"
+    if [ ! -z "$S" ]; then
+        TEMPLATE_FOLDER_NAME+=".$S"
+    fi
 
-     # Download the tpz file (zip) if folder is not present
-     if [ ! -d "$TEMPLATES_PATH/$TEMPLATE_FOLDER_NAME" ]; then
-          msg "Downloading Godot templates into $TEMPLATES_PATH ..."
+    # Download the tpz file (zip) if folder is not present
+    if [ ! -d "$TEMPLATES_PATH/$TEMPLATE_FOLDER_NAME" ]; then
+        msg "Downloading Godot templates into $TEMPLATES_PATH ..."
 
-          # Where to download the zip file
-          WEBSITE="https://downloads.tuxfamily.org/godotengine/$V"
-          TEMPLATES_TARBALL="Godot_v$GODOT_VERSION""_export_templates.tpz"
+        # Where to download the zip file
+        WEBSITE="https://downloads.tuxfamily.org/godotengine/$V"
+        TEMPLATES_TARBALL="Godot_v$GODOT_VERSION""_export_templates.tpz"
 
-          # Contrary to CEF we cannot unzip while downloading.
-          mkdir -p "$TEMPLATES_PATH"
-          (cd $TEMPLATES_PATH
-           wget -O templates-$GODOT_VERSION.zip $WEBSITE/$TEMPLATES_TARBALL
-           unzip templates-$GODOT_VERSION.zip
-           # In addition the folder name inside the zip is "templates" but
-           # shall be the Godot version: so rename it after and beware to
-           # convert the '-' to '.'
-           mv templates "$TEMPLATE_FOLDER_NAME"
-          )
-     fi
+        # Contrary to CEF we cannot unzip while downloading.
+        mkdir -p "$TEMPLATES_PATH"
+        (cd $TEMPLATES_PATH
+         wget -O templates-$GODOT_VERSION.zip $WEBSITE/$TEMPLATES_TARBALL
+         unzip templates-$GODOT_VERSION.zip
+         # In addition the folder name inside the zip is "templates" but
+         # shall be the Godot version: so rename it after and beware to
+         # convert the '-' to '.'
+         mv templates "$TEMPLATE_FOLDER_NAME"
+        )
+    fi
 }
 
 ### Create the Stigmee executable
@@ -414,10 +410,10 @@ function compile_stigmee
      STIGMEE_ALIAS=$WORKSPACE_STIGMEE/stigmee-$TARGET
      $GODOT_EDITOR_ALIAS --no-window --export "$EXPORT_CMD" $STIGMEE_BUILD_PATH/$STIGMEE_BIN
      if [ ! -L $STIGMEE_ALIAS ] || [ ! -e $STIGMEE_ALIAS ]; then
-        ln -s $STIGMEE_BUILD_PATH/$STIGMEE_BIN $STIGMEE_ALIAS
+         ln -s $STIGMEE_BUILD_PATH/$STIGMEE_BIN $STIGMEE_ALIAS
      fi
      if [ ! -L $CEF_GODOT_EXAMPLE_BUILD ] || [ ! -e $CEF_GODOT_EXAMPLE_BUILD ]; then
-        ln -s $STIGMEE_BUILD_PATH $CEF_GODOT_EXAMPLE_BUILD
+         ln -s $STIGMEE_BUILD_PATH $CEF_GODOT_EXAMPLE_BUILD
      fi
     )
 }

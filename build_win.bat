@@ -25,7 +25,7 @@ call:set_env
 call:%1
 )
 
-IF %ERRORLEVEL% == 0 ( 
+IF %ERRORLEVEL% == 0 (
     echo [106m Great, all work done ![0m
 )
 cd %SCRIPT_PATH%
@@ -34,13 +34,12 @@ EXIT /B %ERRORLEVEL%
 :: Functions
 
 :set_env
-
     echo [42m [set_env] Setting environment... [0m
     set SCRIPT_PATH=%WORKSPACE_STIGMEE%/packages/install
     set STIGMEE_PROJECT_PATH=%WORKSPACE_STIGMEE%/stigmee
     set STIGMEE_BUILD_PATH=%STIGMEE_PROJECT_PATH%/build
-	set GODOT_V=3.4.2
-	set GODOT_T=stable
+    set GODOT_V=3.4.2
+    set GODOT_T=stable
     set GODOT_VERSION=%GODOT_V%-%GODOT_T%
     set GODOT_ROOT_PATH=%WORKSPACE_STIGMEE%/godot/%GODOT_VERSION%
     set GODOT_CPP_PATH=%GODOT_ROOT_PATH%/cpp
@@ -69,7 +68,7 @@ EXIT /B %ERRORLEVEL%
     echo [42m [compile_godot_editor] Compiling Editor... [0m
     cd %GODOT_EDITOR_PATH%
     scons platform=windows --jobs=8 || goto :error
-	mklink "%GODOT_EDITOR_ALIAS%" "%GODOT_EDITOR_BIN_PATH%/godot.windows.tools.64.exe"
+    mklink "%GODOT_EDITOR_ALIAS%" "%GODOT_EDITOR_BIN_PATH%/godot.windows.tools.64.exe"
     EXIT /B 0
 
 :cef_get
@@ -78,15 +77,15 @@ EXIT /B %ERRORLEVEL%
         echo [106m CEF libraries already present, continuing...[0m
     ) else (
         echo [101m CEF libraries Missing ![0m
-            cd %CEF_GDNATIVE_PATH%
+        cd %CEF_GDNATIVE_PATH%
         mkdir thirdparty
         cd %GDCEF_THIRDPARTY_PATH%
         echo [45m Downloading CEF automated build... [0m
         python "%SCRIPT_PATH%/checkenv.py" --remove-cef-dir
-            echo [45m Extracted CEF [0m
+        echo [45m Extracted CEF [0m
         for /F "tokens=* USEBACKQ" %%G in (`dir /b cef_binary_*`) do (
-                echo renaming [93m %%G [0m into [94m cef_binary [0m
-                rename "%%G" cef_binary
+            echo renaming [93m %%G [0m into [94m cef_binary [0m
+            rename "%%G" cef_binary
         )
     )
     EXIT /B 0
@@ -143,50 +142,50 @@ EXIT /B %ERRORLEVEL%
     echo [45m Installing stigmark_client library as libstigmark_client.dll...[0m
     echo [93m %STIGMARK_GDNATIVE_PATH%/target/debug/ [stigmark_client.dll] [0m into [94m %STIGMEE_BUILD_PATH% [0m
     robocopy /NFL /NDL /NJH /nc /ns /np %STIGMARK_GDNATIVE_PATH%/target/debug/ %STIGMEE_BUILD_PATH% stigmark_client.dll
-	cd %STIGMARK_GDNATIVE_PATH%/target/debug/
-	copy /Y stigmark_client.dll libstigmark_client.dll
-	copy /Y stigmark_client.lib libstigmark_client.lib
+    cd %STIGMARK_GDNATIVE_PATH%/target/debug/
+    copy /Y stigmark_client.dll libstigmark_client.dll
+    copy /Y stigmark_client.lib libstigmark_client.lib
     cd %STIGMEE_BUILD_PATH%
     if exist "%STIGMEE_BUILD_PATH%/libstigmark_client.dll" (
         del libstigmark_client.dll
     )
     echo renaming as libstigmark_client.dll (for gdnative usage)
     ren stigmark_client.dll libstigmark_client.dll
-	
-	echo [45m [native_stigmark] Compiling Stigmark GDNative library (libstigmark.dll)...[0m
-	cd %STIGMARK_GDNATIVE_PATH%/src-stigmarkmod
-	scons platform=windows target=release workspace=%WORKSPACE_STIGMEE% godot_version=%GODOT_VERSION% --jobs=8 || goto :error
+
+    echo [45m [native_stigmark] Compiling Stigmark GDNative library (libstigmark.dll)...[0m
+    cd %STIGMARK_GDNATIVE_PATH%/src-stigmarkmod
+    scons platform=windows target=release workspace=%WORKSPACE_STIGMEE% godot_version=%GODOT_VERSION% --jobs=8 || goto :error
     xcopy /y ..\..\..\..\stigmee\build\libstigmark.dll ..\src-stigmarkapp\bin\win64
     EXIT /B 0
-	
+
 :install_godot_templates
-    echo [42m [install_godot_templates] Instaling templates required for export [0m 
-	set TEMPLATE_PATH=%UserProfile%\AppData\Roaming\Godot\templates
-	set TEMPLATE_FOLDER_NAME=%GODOT_V%.%GODOT_T%
-	set TEMPLATE_WEBSITE=https://downloads.tuxfamily.org/godotengine/%GODOT_V%
+    echo [42m [install_godot_templates] Instaling templates required for export [0m
+    set TEMPLATE_PATH=%UserProfile%\AppData\Roaming\Godot\templates
+    set TEMPLATE_FOLDER_NAME=%GODOT_V%.%GODOT_T%
+    set TEMPLATE_WEBSITE=https://downloads.tuxfamily.org/godotengine/%GODOT_V%
     set TEMPLATES_TARBALL=Godot_v%GODOT_VERSION%_export_templates.tpz
-	echo [45m Downloading Godot templates (%TEMPLATE_WEBSITE%/%TEMPLATES_TARBALL%)...[0m
-	if not exist "%TEMPLATE_PATH%" mkdir "%TEMPLATE_PATH%"
-	cd /D %TEMPLATE_PATH%
+    echo [45m Downloading Godot templates (%TEMPLATE_WEBSITE%/%TEMPLATES_TARBALL%)...[0m
+    if not exist "%TEMPLATE_PATH%" mkdir "%TEMPLATE_PATH%"
+    cd /D %TEMPLATE_PATH%
     curl -o templates-%GODOT_VERSION%.zip %TEMPLATE_WEBSITE%/%TEMPLATES_TARBALL%
-	echo [45m Extracting ...[0m
+    echo [45m Extracting ...[0m
     tar -xf templates-%GODOT_VERSION%.zip
-	ren templates %TEMPLATE_FOLDER_NAME%
-	cd /D %SCRIPT_PATH%
-	EXIT /B 0
+    ren templates %TEMPLATE_FOLDER_NAME%
+    cd /D %SCRIPT_PATH%
+    EXIT /B 0
 
 :compile_stigmee
     echo [42m [compile_stigmee] Compiling Stigmark Module [0m
     cd %STIGMEE_PROJECT_PATH%
     set STIGMEE_BIN=Stigmee.win.release.64.exe
     if exist "%GODOT_EDITOR_ALIAS%" (
-	    %GODOT_EDITOR_ALIAS% --no-window --export "Windows Desktop" %STIGMEE_BUILD_PATH%/%STIGMEE_BIN% || goto :error
-		EXIT /B 0
-	) else (
+        %GODOT_EDITOR_ALIAS% --no-window --export "Windows Desktop" %STIGMEE_BUILD_PATH%/%STIGMEE_BIN% || goto :error
+        EXIT /B 0
+    ) else (
         echo [101m Godot editor symlink is missing ! run 'build_win.bat compile_godot_editor' first.[0m
-		EXIT /B 1
-	)
-	
+        EXIT /B 1
+    )
+
 :error
-	echo [101m Failed with error #%errorlevel% [0m
-	exit /b %errorlevel%
+    echo [101m Failed with error #%errorlevel% [0m
+    exit /b %errorlevel%
