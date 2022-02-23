@@ -272,10 +272,10 @@ function install_cef_assets
     msg "Installing Chromium Embedded Framework to $STIGMEE_BUILD_PATH ..."
     if [[ "$OSTYPE" == "darwin"* ]]; then
         S="$CEF_PATH/$CEF_TARGET/Chromium Embedded Framework.framework/Libraries"
-        cp --verbose -R "$S/"*.dylib $STIGMEE_BUILD_PATH
+        cp -R "$S/"*.dylib $STIGMEE_BUILD_PATH
 
         S="$CEF_PATH/$CEF_TARGET/Chromium Embedded Framework.framework/Resources"
-        cp --verbose -R "$S/" $STIGMEE_BUILD_PATH
+        cp -R "$S/" $STIGMEE_BUILD_PATH
     else
         S="$CEF_PATH/build/tests/cefsimple/$CEF_TARGET"
         cp --verbose "$S/v8_context_snapshot.bin" "$S/icudtl.dat" $STIGMEE_BUILD_PATH
