@@ -114,7 +114,7 @@ function install_prerequisite
         sudo pkg install py37-scons pkgconf xorg-libraries libXcursor libXrandr \
              libXi xorgproto libGLU alsa-lib pulseaudio yasm ninja-build libssl-dev rustc
     elif [[ "$OSTYPE" == "darwin"* ]]; then
-        brew install scons yasm cmake ninja openssl rust
+        brew install scons yasm cmake ninja openssl rust rustup
     elif [[ "$OSTYPE" == "msys"* ]]; then
         pacman -S --noconfirm --needed tar git make mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake \
                mingw-w64-x86_64-ninja mingw-w64-x86_64-python3-pip mingw-w64-x86_64-scons \
