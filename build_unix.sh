@@ -79,11 +79,13 @@ fi
 ### Compile the project in debug or release mode ?
 if [ "$TARGET" == "debug" ]; then
     msg "Compilation in debug mode"
-    GODOT_TARGET=debug
+    GODOT_EDITOR_TARGET=debug
+    GODOT_CPP_TARGET=debug
     CEF_TARGET=Debug
 elif [ "$TARGET" == "release" ]; then
     msg "Compilation in release mode"
-    GODOT_TARGET=release
+    GODOT_EDITOR_TARGET=release_debug
+    GODOT_CPP_TARGET=release
     CEF_TARGET=Release
 else
     err "Invalid target. Shall be debug or release"
@@ -136,23 +138,23 @@ function install_prerequisite
 function compile_godot_cpp
 {
     msg "Compiling Godot C++ API (inside $GODOT_CPP_PATH) ..."
-    if [ ! -f $GODOT_CPP_PATH/bin/libgodot-cpp*$GODOT_TARGET* ]; then
+    if [ ! -f $GODOT_CPP_PATH/bin/libgodot-cpp*$GODOT_CPP_TARGET* ]; then
         (cd $GODOT_CPP_PATH
          if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-             scons platform=linux target=$GODOT_TARGET --jobs=$NPROC
+             scons platform=linux target=$GODOT_CPP_TARGET --jobs=$NPROC
          elif [[ "$OSTYPE" == "freebsd"* ]]; then
-             scons platform=linux target=$GODOT_TARGET --jobs=$NPROC
+             scons platform=linux target=$GODOT_CPP_TARGET --jobs=$NPROC
          elif [[ "$OSTYPE" == "darwin"* ]]; then
              ARCHI=`uname -m`
              if [[ "$ARCHI" == "x86_64" ]]; then
-                 scons platform=osx macos_arch=x86_64 target=$GODOT_TARGET --jobs=$NPROC
+                 scons platform=osx macos_arch=x86_64 target=$GODOT_CPP_TARGET --jobs=$NPROC
              else
-                 scons platform=osx macos_arch=arm64 target=$GODOT_TARGET --jobs=$NPROC
+                 scons platform=osx macos_arch=arm64 target=$GODOT_CPP_TARGET --jobs=$NPROC
              fi
          elif [[ "$OSTYPE" == "msys"* ]]; then
-             scons platform=windows use_mingw=True target=$GODOT_TARGET --jobs=$NPROC
+             scons platform=windows use_mingw=True target=$GODOT_CPP_TARGET --jobs=$NPROC
          else
-             err "Unknown architecture $OSTYPE: I dunno how install Godot-cpp"
+             err "Unknown architecture $OSTYPE: I dunno how to compile Godot-cpp"
              exit 1
          fi
         )
@@ -167,11 +169,27 @@ function compile_godot_editor
         (cd $GODOT_EDITOR_PATH
          # Check if we are not running inside GitHub actions docker
          if [ -z "$GITHUB_ACTIONS" -a -z "$CI" ]; then
-             scons -j$NPROC
+	     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+		 scons platform=linux target=$GODOT_EDITOR_TARGET --jobs=$NPROC
+             elif [[ "$OSTYPE" == "freebsd"* ]]; then
+		 scons platform=linux target=$GODOT_EDITOR_TARGET --jobs=$NPROC
+             elif [[ "$OSTYPE" == "darwin"* ]]; then
+		 ARCHI=`uname -m`
+		 if [[ "$ARCHI" == "x86_64" ]]; then
+                     scons platform=osx macos_arch=x86_64 target=$GODOT_EDITOR_TARGET --jobs=$NPROC
+		 else
+                     scons platform=osx macos_arch=arm64 target=$GODOT_EDITOR_TARGET --jobs=$NPROC
+		 fi
+             elif [[ "$OSTYPE" == "msys"* ]]; then
+		 scons platform=windows use_mingw=True target=$GODOT_EDITOR_TARGET --jobs=$NPROC
+             else
+		 err "Unknown architecture $OSTYPE: I dunno how to compile Godot editor"
+		 exit 1
+             fi
          else
              # Compile a Godot editor without X11 (godot --no-window does not
              # work with Linux but only on Windows)
-             scons -j$NPROC plateform=server production=yes tools=yes
+             scons plateform=server tools=yes target=$GODOT_EDITOR_TARGET --jobs=$NPROC
          fi
          if [ ! -L $GODOT_EDITOR_ALIAS ] || [ ! -e $GODOT_EDITOR_ALIAS ]; then
              ln -s $GODOT_EDITOR_BIN_PATH/godot.* $GODOT_EDITOR_ALIAS
@@ -288,7 +306,7 @@ function install_cef_assets
 function cef_scons_cmd
 {
     VERBOSE=1 scons workspace=$WORKSPACE_STIGMEE \
-           godot_version=$GODOT_VERSION target=$GODOT_TARGET --jobs=$NPROC \
+           godot_version=$GODOT_VERSION target=$GODOT_CPP_TARGET --jobs=$NPROC \
            arch=`uname -m` platform=$1
 }
 
@@ -392,16 +410,16 @@ function compile_stigmee
     EXPORT_CMD=
     (cd $STIGMEE_PROJECT_PATH
      if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-         STIGMEE_BIN=Stigmee.x11.$GODOT_TARGET.64
+         STIGMEE_BIN=Stigmee.x11.$GODOT_CPP_TARGET.64
          EXPORT_CMD="Linux/X11"
      elif [[ "$OSTYPE" == "freebsd"* ]]; then
-         STIGMEE_BIN=Stigmee.x11.$GODOT_TARGET.64
+         STIGMEE_BIN=Stigmee.x11.$GODOT_CPP_TARGET.64
          EXPORT_CMD="Linux/X11"
      elif [[ "$OSTYPE" == "darwin"* ]]; then
-         STIGMEE_BIN=Stigmee.osx.$GODOT_TARGET.64
+         STIGMEE_BIN=Stigmee.osx.$GODOT_CPP_TARGET.64
          EXPORT_CMD="Mac OSX"
      else
-         STIGMEE_BIN=Stigmee.win.$GODOT_TARGET.64.exe
+         STIGMEE_BIN=Stigmee.win.$GODOT_CPP_TARGET.64.exe
          EXPORT_CMD="Windows Desktop"
          err "Unknown archi."
          exit 1
