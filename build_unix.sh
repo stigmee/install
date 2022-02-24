@@ -169,22 +169,22 @@ function compile_godot_editor
         (cd $GODOT_EDITOR_PATH
          # Check if we are not running inside GitHub actions docker
          if [ -z "$GITHUB_ACTIONS" -a -z "$CI" ]; then
-	     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-		 scons platform=linux target=$GODOT_EDITOR_TARGET --jobs=$NPROC
+             if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+                 scons platform=linux target=$GODOT_EDITOR_TARGET --jobs=$NPROC
              elif [[ "$OSTYPE" == "freebsd"* ]]; then
-		 scons platform=linux target=$GODOT_EDITOR_TARGET --jobs=$NPROC
+                 scons platform=linux target=$GODOT_EDITOR_TARGET --jobs=$NPROC
              elif [[ "$OSTYPE" == "darwin"* ]]; then
-		 ARCHI=`uname -m`
-		 if [[ "$ARCHI" == "x86_64" ]]; then
+                 ARCHI=`uname -m`
+                 if [[ "$ARCHI" == "x86_64" ]]; then
                      scons platform=osx macos_arch=x86_64 target=$GODOT_EDITOR_TARGET --jobs=$NPROC
-		 else
+                 else
                      scons platform=osx macos_arch=arm64 target=$GODOT_EDITOR_TARGET --jobs=$NPROC
-		 fi
+                 fi
              elif [[ "$OSTYPE" == "msys"* ]]; then
-		 scons platform=windows use_mingw=True target=$GODOT_EDITOR_TARGET --jobs=$NPROC
+                 scons platform=windows use_mingw=True target=$GODOT_EDITOR_TARGET --jobs=$NPROC
              else
-		 err "Unknown architecture $OSTYPE: I dunno how to compile Godot editor"
-		 exit 1
+                 err "Unknown architecture $OSTYPE: I dunno how to compile Godot editor"
+                 exit 1
              fi
          else
              # Compile a Godot editor without X11 (godot --no-window does not
