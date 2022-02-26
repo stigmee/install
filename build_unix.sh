@@ -119,11 +119,14 @@ function install_prerequisite
         pacman -S --noconfirm --needed tar git make mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake \
                mingw-w64-x86_64-ninja mingw-w64-x86_64-python3-pip mingw-w64-x86_64-scons \
                mingw-w64-x86_64-gcc openssl-devel rust
-        python -m pip install scons
     else
         err "Unknown architecture $OSTYPE: I dunno what to install as system packages"
         exit 1
     fi
+
+    python3 -m pip install scons
+    python3 -m pip install tsrc
+    python3 -m pip install requests
 
     # Check if cmake version is >= 3.19
     CMAKE_CURRENT_VERSION=`cmake --version | head -n1 | cut -d" " -f3`
@@ -189,6 +192,7 @@ function compile_godot_editor
          else
              # Compile a Godot editor without X11 (godot --no-window does not
              # work with Linux but only on Windows)
+             echo "Compiling Godot in headless mode ..."
              scons plateform=server tools=yes target=$GODOT_EDITOR_TARGET --jobs=$NPROC
          fi
          if [ ! -L $GODOT_EDITOR_ALIAS ] || [ ! -e $GODOT_EDITOR_ALIAS ]; then

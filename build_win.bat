@@ -58,6 +58,8 @@ EXIT /B %ERRORLEVEL%
     set CEF_TARBALL=cef_binary_98.2.0%2Bg78c653a%2Bchromium-98.0.4758.102_windows64.tar.bz2
     EXIT /B 0
 
+:: FIXME install python3 scons tsrc requests
+
 :compile_godot_cpp
     echo [42m [compile_godot_cpp] Compiling godot-cpp... [0m
     cd %GODOT_CPP_PATH%
@@ -65,9 +67,14 @@ EXIT /B %ERRORLEVEL%
     EXIT /B 0
 
 :compile_godot_editor
-    echo [42m [compile_godot_editor] Compiling Editor... [0m
     cd %GODOT_EDITOR_PATH%
-    scons platform=windows --jobs=8 || goto :error
+    if "%GITHUB_ACTIONS%" == "" (
+        echo [42m [compile_godot_editor] Compiling Editor... [0m
+        scons platform=windows --jobs=8 || goto :error
+    ) else (
+        echo [42m [compile_godot_editor] Compiling Editor in headless mode... [0m
+        scons platform=server tools=yes --jobs=8 || goto :error
+    )
     mklink "%GODOT_EDITOR_ALIAS%" "%GODOT_EDITOR_BIN_PATH%/godot.windows.tools.64.exe"
     EXIT /B 0
 
@@ -81,7 +88,7 @@ EXIT /B %ERRORLEVEL%
         mkdir thirdparty
         cd %GDCEF_THIRDPARTY_PATH%
         echo [45m Downloading CEF automated build... [0m
-        python "%SCRIPT_PATH%/checkenv.py" --remove-cef-dir
+        python "%SCRIPT_PATH%/checkenv.py" --remove-cef-dir || goto :error
         echo [45m Extracted CEF [0m
         for /F "tokens=* USEBACKQ" %%G in (`dir /b cef_binary_*`) do (
             echo renaming [93m %%G [0m into [94m cef_binary [0m
