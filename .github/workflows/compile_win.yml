@@ -31,6 +31,12 @@ jobs:
   export_windows:
     runs-on: windows-2022
     steps:
+
+    # Add path for finding cl.exe
+    # FIXME: I dunno why Godot editor and godot-cpp can find cl.exe while our
+    # godot native modules cannot find it without this extra path
+    - uses: ilammy/msvc-dev-cmd@v1.10.0
+
     - name: Installing Python3 packages
       shell: powershell
       run: |
