@@ -70,12 +70,13 @@ EXIT /B %ERRORLEVEL%
     cd %GODOT_EDITOR_PATH%
     if "%GITHUB_ACTIONS%" == "" (
         echo [42m [compile_godot_editor] Compiling Editor... [0m
-        scons platform=windows --jobs=8 || goto :error
+        scons platform=windows target=release --jobs=8 || goto :error
+        mklink "%GODOT_EDITOR_ALIAS%" "%GODOT_EDITOR_BIN_PATH%\godot.windows.tools.64.exe" || goto :error
     ) else (
         echo [42m [compile_godot_editor] Compiling Editor in headless mode... [0m
-        scons platform=server tools=yes --jobs=8 || goto :error
+        scons platform=windows tools=no target=release --jobs=8 || goto :error
+        mklink "%GODOT_EDITOR_ALIAS%" "%GODOT_EDITOR_BIN_PATH%\godot.windows.opt.64.exe" || goto :error
     )
-    mklink "%GODOT_EDITOR_ALIAS%" "%GODOT_EDITOR_BIN_PATH%/godot.windows.tools.64.exe"
     EXIT /B 0
 
 :cef_get
