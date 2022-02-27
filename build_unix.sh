@@ -193,7 +193,7 @@ function compile_godot_editor
              # Compile a Godot editor without X11 (godot --no-window does not
              # work with Linux but only on Windows)
              echo "Compiling Godot in headless mode ..."
-             scons plateform=server tools=yes target=$GODOT_EDITOR_TARGET --jobs=$NPROC
+             scons plateform=x11 tools=no vulkan=no x11=no target=$GODOT_EDITOR_TARGET --jobs=$NPROC
          fi
          if [ ! -L $GODOT_EDITOR_ALIAS ] || [ ! -e $GODOT_EDITOR_ALIAS ]; then
              ln -s $GODOT_EDITOR_BIN_PATH/godot.* $GODOT_EDITOR_ALIAS
