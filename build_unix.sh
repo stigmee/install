@@ -137,6 +137,18 @@ function install_prerequisite
     fi
 }
 
+### Remove and clear the Stigmee's build folder.
+### Failed if trying to delete something which is not a folder.
+### Removing the folder will remove GPUCache, logs and Stigmee binary
+### that we do not want since we want to compute MD5 on files.
+function create_build_dir
+{
+    if [ -d $STIGMEE_BUILD_PATH ]; then
+        rm -fr $STIGMEE_BUILD_PATH
+    fi
+    mkdir -p $STIGMEE_BUILD_PATH
+}
+
 ### Compile godot-cpp
 function compile_godot_cpp
 {
@@ -438,18 +450,6 @@ function compile_stigmee
          ln -s $STIGMEE_BUILD_PATH $CEF_GODOT_EXAMPLE_BUILD
      fi
     )
-}
-
-### Remove and clear the Stigmee's build folder.
-### Failed if trying to delete something which is not a folder.
-### Removing the folder will remove GPUCache, logs and Stigmee binary
-### that we do not want since we want to compute MD5 on files.
-function create_build_dir
-{
-    if [ -d $STIGMEE_BUILD_PATH ]; then
-        rm -fr $STIGMEE_BUILD_PATH
-    fi
-    mkdir -p $STIGMEE_BUILD_PATH
 }
 
 ### Script entry point
