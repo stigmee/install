@@ -109,7 +109,7 @@ function install_prerequisite
         sudo apt-get install build-essential yasm scons pkg-config libx11-dev \
              libxcursor-dev libxinerama-dev libgl1-mesa-dev libglu-dev \
              libasound2-dev libpulse-dev libudev-dev libxi-dev libxrandr-dev ninja-build \
-             libgtk-3-dev libssl-dev rustc
+             libgtk-3-dev libssl-dev rustc sshpass
     elif [[ "$OSTYPE" == "freebsd"* ]]; then
         sudo pkg install py37-scons pkgconf xorg-libraries libXcursor libXrandr \
              libXi xorgproto libGLU alsa-lib pulseaudio yasm ninja-build libssl-dev rustc
@@ -419,10 +419,10 @@ function install_godot_templates
 }
 
 ### Create the Stigmee executable
+STIGMEE_BIN=
 function compile_stigmee
 {
     msg "Compiling Stigmee (inside $STIGMEE_PROJECT_PATH) ..."
-    STIGMEE_BIN=
     EXPORT_CMD=
     (cd $STIGMEE_PROJECT_PATH
      if [[ "$OSTYPE" == "linux-gnu"* ]]; then
@@ -452,6 +452,33 @@ function compile_stigmee
     )
 }
 
+### Deploy the Stigmee binarie to our server (CI only)
+function deploy_stigmee
+{
+    # Deploy only from GitHub actions
+    if [ ! -z "$GITHUB_ACTIONS" -o ! -z "$CI" ]; then
+        msg "Deploy Stigmee"
+
+        # Set tarball name FIXME missing version
+        if [ -z "$STIGMEE_BIN" ]; then
+            STIGMEE_BIN="Stigmee"
+        fi
+        STIGMEE_TARBALL="$STIGMEE_BIN.tar.bz2"
+
+        # Compress the build folder
+        (cd $STIGMEE_PROJECT_PATH
+         mv build Stigmee
+         tar jcvf $STIGMEE_TARBALL Stigmee
+         mv Stigmee build
+
+         # Transfer the Stigmee tarball
+         $WORKSPACE_STIGMEE/packages/install/deploy.sh \
+             "$SFTP_STIGMEE_ADDRESS" "$SFTP_STIGMEE_PORT" \
+             "$SFTP_STIGMEE_PSWD" "$STIGMEE_TARBALL"
+        )
+    fi
+}
+
 ### Script entry point
 install_prerequisite
 create_build_dir
@@ -464,4 +491,5 @@ compile_godot_cef "$GDCEF_PROCESSES_PATH"
 compile_stigmark
 install_godot_templates
 compile_stigmee
+deploy_stigmee
 msg "Cool! Stigmee project compiled with success!"
