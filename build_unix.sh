@@ -471,7 +471,10 @@ function deploy_stigmee
          tar jcvf $STIGMEE_TARBALL Stigmee
          mv Stigmee build
 
-         # Transfer the Stigmee tarball
+         # Transfer the Stigmee tarball.
+         # Note: for security reason all $SFTP_STIGMEE_* variables
+         # have their values stored as GitHub secrets that can be
+         # reached from the GitHub project settings.
          $WORKSPACE_STIGMEE/packages/install/deploy.sh \
              "$SFTP_STIGMEE_ADDRESS" "$SFTP_STIGMEE_PORT" \
              "$SFTP_STIGMEE_PSWD" "$STIGMEE_TARBALL"
