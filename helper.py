@@ -30,6 +30,7 @@ from sysconfig import get_platform
 from packaging import version
 from pathlib import Path
 from platform import machine, system
+from subprocess import run
 
 ###############################################################################
 ### Hack that seems to fix color issue for Windows

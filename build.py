@@ -113,21 +113,21 @@ def set_compile_mode(debug):
 def install_system_packages():
     info("Installing system packages ...")
     if OSTYPE == "Linux":
-        subprocess.run(["sudo", "apt-get", "install", "build-essential", "yasm",
-                        "scons", "pkg-config", "libx11-dev", "libxcursor-dev",
-                        "libxinerama-dev", "libgl1-mesa-dev", "libglu-dev",
-                        "libasound2-dev", "libpulse-dev", "libudev-dev",
-                        "libxi-dev", "libxrandr-dev", "ninja-build",
-                        "libgtk-3-dev", "libssl-dev", "rustc", "sshpass"])
+        run(["sudo", "apt-get", "install", "build-essential", "yasm",
+             "scons", "pkg-config", "libx11-dev", "libxcursor-dev",
+             "libxinerama-dev", "libgl1-mesa-dev", "libglu-dev",
+             "libasound2-dev", "libpulse-dev", "libudev-dev",
+             "libxi-dev", "libxrandr-dev", "ninja-build",
+              "libgtk-3-dev", "libssl-dev", "rustc", "sshpass"], check=True)
     elif OSTYPE == "Darwin":
-        subprocess.run(["brew", "install", "scons", "yasm", "cmake", "ninja",
-                        "openssl", "rust", "rustup"])
+        run(["brew", "install", "scons", "yasm", "cmake", "ninja",
+             "openssl", "rust", "rustup"], check=True)
     elif OSTYPE == "MinGW":
-        subprocess.run(["pacman", "-S", "--noconfirm", "--needed", "tar", "git",
-                        "make", "mingw-w64-x86_64-toolchain", "openssl-devel",
-                        "mingw-w64-x86_64-cmake", "mingw-w64-x86_64-ninja",
-                        "mingw-w64-x86_64-python3-pip", "rust",
-                        "mingw-w64-x86_64-scons", "mingw-w64-x86_64-gcc"])
+        run(["pacman", "-S", "--noconfirm", "--needed", "tar", "git",
+             "make", "mingw-w64-x86_64-toolchain", "openssl-devel",
+             "mingw-w64-x86_64-cmake", "mingw-w64-x86_64-ninja",
+             "mingw-w64-x86_64-python3-pip", "rust",
+             "mingw-w64-x86_64-scons", "mingw-w64-x86_64-gcc"], check=True)
     elif OSTYPE != "Windows":
         fatal("Your operating system " + OSTYPE + " is not managed")
 
@@ -141,9 +141,9 @@ def create_stigmee_workspace():
              "clone the project ...")
         mkdir(WORKSPACE_STIGMEE)
         os.chdir(WORKSPACE_STIGMEE)
-        subprocess.run(["tsrc", "--color=never", "--verbose", "init",
-                        "git@github.com:stigmee/manifest.git"])
-        subprocess.run(["tsrc", "--color=never", "--verbose", "sync"])
+        run(["tsrc", "--color=never", "--verbose", "init",
+             "git@github.com:stigmee/manifest.git"], check=True)
+        run(["tsrc", "--color=never", "--verbose", "sync"], check=True)
 
     # Check if important folders are present to be sure we are in Stigmee
     # workspace.
@@ -186,22 +186,17 @@ def compile_godot_editor():
         # Check if we are not running inside GitHub actions docker
         if os.environ.get("$GITHUB_ACTIONS") == None:
             if OSTYPE == "Linux":
-                subprocess.run(["scons", "platform=linux",
-                                "target=" + GODOT_EDITOR_TARGET,
-                                "--jobs=" + NPROC])
+                run(["scons", "platform=linux", "target=" + GODOT_EDITOR_TARGET,
+                     "--jobs=" + NPROC], check=True)
             elif OSTYPE == "Darwin":
-                subprocess.run(["scons", "platform=osx",
-                                "macos_arch=" + ARCHI,
-                                "target=" + GODOT_EDITOR_TARGET,
-                                "--jobs=" + NPROC])
+                run(["scons", "platform=osx", "macos_arch=" + ARCHI,
+                     "target=" + GODOT_EDITOR_TARGET, "--jobs=" + NPROC], check=True)
             elif OSTYPE == "MinGW":
-                subprocess.run(["scons", "platform=windows", "use_mingw=True",
-                                "target=" + GODOT_EDITOR_TARGET,
-                                "--jobs=" + NPROC])
+                run(["scons", "platform=windows", "use_mingw=True",
+                     "target=" + GODOT_EDITOR_TARGET, "--jobs=" + NPROC], check=True)
             elif OSTYPE == "Windows":
-                subprocess.run(["scons", "platform=windows",
-                                "target=" + GODOT_EDITOR_TARGET,
-                                "--jobs=" + NPROC])
+                run(["scons", "platform=windows", "target=" + GODOT_EDITOR_TARGET,
+                     "--jobs=" + NPROC], check=True)
             else:
                 fatal("Unknown architecture " + OSTYPE +
                       ": I dunno how to compile Godot editor")
@@ -209,9 +204,9 @@ def compile_godot_editor():
             # GitHub actions: compile a Godot editor without X11 (godot
             # --no-window does not work with Linux but only on Windows)
             info("Compiling Godot in headless mode ...")
-            subprocess.run(["scons", "plateform=x11", "tools=no",
-                            "vulkan=no x11=no", "target=" + GODOT_EDITOR_TARGET,
-                            "--jobs=" + NPROC])
+            run(["scons", "plateform=x11", "tools=no",
+                 "vulkan=no x11=no", "target=" + GODOT_EDITOR_TARGET,
+                 "--jobs=" + NPROC], check=True)
 
         # Create an alias on the Godot editor (we suppose the glob will find a
         # single binary FIXME ugly!)
@@ -264,22 +259,17 @@ def compile_godot_cpp():
     if not os.path.exists(lib):
         os.chdir(GODOT_CPP_PATH)
         if OSTYPE == "Linux":
-            subprocess.run(["scons", "platform=linux",
-                            "target=" + GODOT_CPP_TARGET,
-                            "--jobs=" + NPROC])
+            run(["scons", "platform=linux", "target=" + GODOT_CPP_TARGET,
+                 "--jobs=" + NPROC], check=True)
         elif OSTYPE == "Darwin":
-            subprocess.run(["scons", "platform=osx",
-                            "macos_arch=" + ARCHI,
-                            "target=" + GODOT_CPP_TARGET,
-                            "--jobs=" + NPROC])
+            run(["scons", "platform=osx", "macos_arch=" + ARCHI,
+                 "target=" + GODOT_CPP_TARGET, "--jobs=" + NPROC], check=True)
         elif OSTYPE == "MinGW":
-            subprocess.run(["scons", "platform=windows", "use_mingw=True",
-                            "target=" + GODOT_CPP_TARGET,
-                            "--jobs=" + NPROC])
+            run(["scons", "platform=windows", "use_mingw=True",
+                 "target=" + GODOT_CPP_TARGET, "--jobs=" + NPROC], check=True)
         elif OSTYPE == "Windows":
-            subprocess.run(["scons", "platform=windows",
-                            "target=" + GODOT_CPP_TARGET,
-                            "--jobs=" + NPROC])
+            run(["scons", "platform=windows", "target=" + GODOT_CPP_TARGET,
+                 "--jobs=" + NPROC], check=True)
         else:
             fatal("Unknown architecture " + OSTYPE + ": I dunno how to compile Godot-cpp")
 
@@ -401,28 +391,28 @@ def compile_cef():
 
         # Compile CEF with Ninja
         if OSTYPE == "Windows":
-            subprocess.run(["cmake", "-DCEF_RUNTIME_LIBRARY_FLAG=/MD", "-DCMAKE_BUILD_TYPE=" + CEF_TARGET, "."])
-            subprocess.run(["cmake", "--build", ".", "--config", CEF_TARGET])
+            run(["cmake", "-DCEF_RUNTIME_LIBRARY_FLAG=/MD", "-DCMAKE_BUILD_TYPE=" + CEF_TARGET, "."], check=True)
+            run(["cmake", "--build", ".", "--config", CEF_TARGET], check=True)
         else:
            mkdir("build")
            os.chdir("build")
-           subprocess.run(["cmake", "-G", "Ninja", "-DCMAKE_BUILD_TYPE=" + CEF_TARGET, ".."])
-           subprocess.run(["ninja", "-v", "-j" + NPROC, "cefsimple"])
+           run(["cmake", "-G", "Ninja", "-DCMAKE_BUILD_TYPE=" + CEF_TARGET, ".."], check=True)
+           run(["ninja", "-v", "-j" + NPROC, "cefsimple"], check=True)
         install_cef_assets()
 
 ###############################################################################
 ### Common Scons command for compiling our Godot gdnative modules
 def gdnative_scons_cmd(plateform):
     if OSTYPE == "Darwin":
-        subprocess.run(["scons", "workspace=" + WORKSPACE_STIGMEE,
-                        "godot_version=" + GODOT_VERSION,
-                        "target=" + GODOT_CPP_TARGET, "--jobs=" + NPROC,
-                        "arch=" + ARCHI, "platform=" + plateform])
+        run(["scons", "workspace=" + WORKSPACE_STIGMEE,
+             "godot_version=" + GODOT_VERSION,
+             "target=" + GODOT_CPP_TARGET, "--jobs=" + NPROC,
+             "arch=" + ARCHI, "platform=" + plateform], check=True)
     else: # FIXME "arch=" + ARCHI not working
-        subprocess.run(["scons", "workspace=" + WORKSPACE_STIGMEE,
-                        "godot_version=" + GODOT_VERSION,
-                        "target=" + GODOT_CPP_TARGET, "--jobs=" + NPROC,
-                        "platform=" + plateform])
+        run(["scons", "workspace=" + WORKSPACE_STIGMEE,
+             "godot_version=" + GODOT_VERSION,
+             "target=" + GODOT_CPP_TARGET, "--jobs=" + NPROC,
+             "platform=" + plateform], check=True)
 
 ###############################################################################
 ### Compile Godot CEF module named GDCef and its subprocess
@@ -445,17 +435,17 @@ def compile_gdnative_stigmark():
     info("Compiling Godot stigmark (inside " + STIGMARK_GDNATIVE_PATH + ") ...")
     os.chdir(STIGMARK_GDNATIVE_PATH)
     if OSTYPE == "Linux" or OSTYPE == "MinGW":
-        subprocess.run(["./build-linux.sh"])
+        run(["./build-linux.sh"], check=True)
         os.chdir("src-stigmarkmod")
         gdnative_scons_cmd("x11")
         copyfile(LIB_STIGMARK + ".so", STIGMEE_BUILD_PATH)
     elif OSTYPE == "Darwin":
-        subprocess.run(["./build-macosx.sh"])
+        run(["./build-macosx.sh"], check=True)
         os.chdir("src-stigmarkmod")
         gdnative_scons_cmd("osx")
         copyfile(LIB_STIGMARK + ".dylib", STIGMEE_BUILD_PATH)
     else:
-        subprocess.run(["build-windows.cmd"])
+        run(["build-windows.cmd"], check=True)
         os.rename("target\debug\stigmark_client.dll", "target\debug\libstigmark_client.dll")
         os.rename("target\debug\stigmark_client.lib", "target\debug\libstigmark_client.lib")
         os.chdir("src-stigmarkmod")
@@ -481,9 +471,9 @@ def export_stigmee():
     info("Compiling Stigmee (inside " + STIGMEE_PROJECT_PATH + ") ...")
     os.chdir(STIGMEE_PROJECT_PATH)
     STIGMEE_ALIAS = os.path.join(WORKSPACE_STIGMEE, "stigmee-" + STIGMEE_TARGET + EXEC)
-    subprocess.run([GODOT_EDITOR_ALIAS, "--no-window", "--export",
-                    godot_export_command(), os.path.join(STIGMEE_BUILD_PATH,
-                    STIGMEE_EXCEC_NAME)])
+    run([GODOT_EDITOR_ALIAS, "--no-window", "--export",
+         godot_export_command(), os.path.join(STIGMEE_BUILD_PATH,
+         STIGMEE_EXCEC_NAME)], check=True)
     symlink(os.path.join(STIGMEE_BUILD_PATH, STIGMEE_EXCEC_NAME), STIGMEE_ALIAS)
     symlink(STIGMEE_BUILD_PATH, CEF_GODOT_EXAMPLE_BUILD)
 
