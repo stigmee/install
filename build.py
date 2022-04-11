@@ -37,7 +37,8 @@ CEF_VERSION = "100.0.14+g4e5ba66+chromium-100.0.4896.75"
 ### Check if WORKSPACE_STIGMEE is defined as environment variable in your
 ### operating system.
 WORKSPACE_STIGMEE = os.environ.get("WORKSPACE_STIGMEE")
-if WORKSPACE_STIGMEE == "":
+info("$WORKSPACE_STIGMEE=" + WORKSPACE_STIGMEE)
+if WORKSPACE_STIGMEE == None or WORKSPACE_STIGMEE == "":
     fatal("Please export the environment variable WORKSPACE_STIGMEE before "
           "calling this script:\n"
           "  => Linux/Mac OS X:\n"
@@ -79,7 +80,6 @@ STIGMEE_EXCEC_NAME = "Stigmee"
 ### Return the Stigmee tarball name
 def stigmee_exec_name():
     global STIGMEE_EXCEC_NAME
-    os.chdir(STIGMEE_PROJECT_PATH)
     if OSTYPE == "Linux":
         STIGMEE_EXCEC_NAME = "Stigmee.x11." + GODOT_CPP_TARGET + ".64"
     elif OSTYPE == "Darwin":
