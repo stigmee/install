@@ -59,6 +59,8 @@ GODOT_EDITOR_PATH = os.path.join(GODOT_ROOT_PATH, "editor")
 GODOT_EDITOR_BIN_PATH = os.path.join(GODOT_EDITOR_PATH, "bin")
 GODOT_EDITOR_ALIAS = os.path.join(WORKSPACE_STIGMEE, "godot-editor" + EXEC)
 GODOT_GDNATIVE_PATH = os.path.join(WORKSPACE_STIGMEE, "godot", "gdnative")
+IPFS_GDNATIVE_PATH = os.path.join(GODOT_GDNATIVE_PATH, "gdipfs")
+IPFS_GODOT_EXAMPLE_BUILD = os.path.join(IPFS_GDNATIVE_PATH, "example", "build")
 CEF_GDNATIVE_PATH = os.path.join(GODOT_GDNATIVE_PATH, "browser")
 CEF_GODOT_EXAMPLE_BUILD = os.path.join(CEF_GDNATIVE_PATH, "example", "build")
 STIGMARK_GDNATIVE_PATH = os.path.join(GODOT_GDNATIVE_PATH, "stigmark")
@@ -117,16 +119,16 @@ def install_system_packages():
              "scons", "pkg-config", "libx11-dev", "libxcursor-dev",
              "libxinerama-dev", "libgl1-mesa-dev", "libglu-dev",
              "libasound2-dev", "libpulse-dev", "libudev-dev",
-             "libxi-dev", "libxrandr-dev", "ninja-build",
-              "libgtk-3-dev", "libssl-dev", "rustc", "sshpass"], check=True)
+             "libxi-dev", "libxrandr-dev", "ninja-build", "libcurl",
+             "libgtk-3-dev", "libssl-dev", "rustc", "sshpass"], check=True)
     elif OSTYPE == "Darwin":
-        run(["brew", "install", "scons", "yasm", "cmake", "ninja",
+        run(["brew", "install", "scons", "yasm", "cmake", "ninja", "curl",
              "openssl", "rust", "rustup"], check=True)
     elif OSTYPE == "MinGW":
         run(["pacman", "-S", "--noconfirm", "--needed", "tar", "git",
              "make", "mingw-w64-x86_64-toolchain", "openssl-devel",
              "mingw-w64-x86_64-cmake", "mingw-w64-x86_64-ninja",
-             "mingw-w64-x86_64-python3-pip", "rust",
+             "mingw-w64-x86_64-python3-pip", "rust", "mingw-w64-x86_64-curl",
              "mingw-w64-x86_64-scons", "mingw-w64-x86_64-gcc"], check=True)
     elif OSTYPE != "Windows":
         fatal("Your operating system " + OSTYPE + " is not managed")
@@ -415,6 +417,20 @@ def gdnative_scons_cmd(plateform):
              "platform=" + plateform], check=True)
 
 ###############################################################################
+###
+def compile_gdnative_ipfs():
+    info("Compiling Godot IPFS module (inside " + IPFS_GDNATIVE_PATH + ") ...")
+    os.chdir(IPFS_GDNATIVE_PATH)
+    if OSTYPE == "Linux":
+        gdnative_scons_cmd("x11")
+    elif OSTYPE == "Darwin":
+        gdnative_scons_cmd("osx")
+    elif OSTYPE == "Windows" or OSTYPE == "MinGW":
+        gdnative_scons_cmd("windows")
+    else:
+        fatal("Unknown archi " + OSTYPE + ": I dunno how to compile CEF module primary process")
+
+###############################################################################
 ### Compile Godot CEF module named GDCef and its subprocess
 def compile_gdnative_cef(path):
     info("Compiling Godot CEF module (inside " + path + ") ...")
@@ -476,6 +492,7 @@ def export_stigmee():
          STIGMEE_EXCEC_NAME)], check=True)
     symlink(os.path.join(STIGMEE_BUILD_PATH, STIGMEE_EXCEC_NAME), STIGMEE_ALIAS)
     symlink(STIGMEE_BUILD_PATH, CEF_GODOT_EXAMPLE_BUILD)
+    symlink(STIGMEE_BUILD_PATH, IPFS_GODOT_EXAMPLE_BUILD)
 
 ###############################################################################
 ### Deploy the Stigmee executable to our SFTP server
@@ -521,6 +538,7 @@ if __name__ == "__main__":
         compile_godot_cpp()
         download_cef()
         compile_cef()
+        compile_gdnative_ipfs()
         compile_gdnative_cef(GDCEF_PATH)
         compile_gdnative_cef(GDCEF_PROCESSES_PATH)
         compile_gdnative_stigmark()
