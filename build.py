@@ -538,7 +538,8 @@ if __name__ == "__main__":
         compile_godot_cpp()
         download_cef()
         compile_cef()
-        compile_gdnative_ipfs()
+        # Fix the libcurl missing dependency for Windows before uncommenting it
+        # compile_gdnative_ipfs()
         compile_gdnative_cef(GDCEF_PATH)
         compile_gdnative_cef(GDCEF_PROCESSES_PATH)
         compile_gdnative_stigmark()
