@@ -140,7 +140,7 @@ well, you will have the following workspace for Stigmee (may change):
  ┃ ┣ 📂beebots           ➡️ AI to "bookmark" tabs
  ┃ ┗ 📂stigmark          ➡️ Browser extensions to "bookmark" tabs on private server
  ┣ 📜README.md           ➡️ Link to the installation guide
- ┗ 📜build.py            ➡️ Link to packages/install/build.sh for compiling Stigmee
+ ┗ 📜build.py            ➡️ Link to packages/install/build.py for compiling Stigmee
 ```
 
 ## Compile Stigmee for Unix systems
@@ -188,6 +188,47 @@ build.py
 **Note:** The following files are only used for the Windows build: `libcef_dll_wrapper_cmake` and `cef_variables_cmake`.
 The build script installs the compiled libraries into both the build directory (for final executable run) and the godot editor directory (mandatory for running cef from a development project). Also not that for the moment, the final Stigmee executable is not generated (this will be included soon)
 
+## Update your workspace to be synchronized with your cowokers latest changes
+
+This section is for Stigmee developers.
+Simply, go in any folder in your workspace and type:
+```
+cd $WORKSPACE_STIGMEE
+tsrc sync
+```
+
+### Bash script helper
+
+This section is for Stigmee developers.
+Here is a small utility to help initializing or synchronizing your Stigmee
+workspace for Unix. You can add it in your `~/.bashrc` file.
+
+```bash
+export WORKSPACE_STIGMEE=/your/desired/path/for/workspace_stigmee
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$WORKSPACE_STIGMEE/stigmee/build
+
+function update_stigmee()
+{
+    if [ "$WORKSPACE_STIGMEE" == "" ]; then
+        echo "Please export WORKSPACE_STIGMEE to refer to your desired folder."
+        echo "The save the export command in your .bashrc file"
+        exit 1
+    fi
+
+    if [ -d "$WORKSPACE_STIGMEE/.tsrc" ]; then
+        cd "$WORKSPACE_STIGMEE"
+        tsrc sync
+    else
+        mkdir -p "$WORKSPACE_STIGMEE" || exit 1
+        cd "$WORKSPACE_STIGMEE"
+        tsrc --verbose init git@github.com:stigmee/manifest.git
+        tsrc sync
+    fi
+
+    ./build.py release
+}
+```
+
 ## build.py command line
 
 The `./build.py` have command line. You can type `./build.py -h` to show the help.
@@ -197,5 +238,6 @@ MacOs X ...
 
 ## Continous integration and continous deployment
 
+This section is for Stigmee developers.
 (In gestation) Made with GitHub actions inside the `.github/workflows` folder and read its [README](.github/workflows/README.md) for more
 information.
