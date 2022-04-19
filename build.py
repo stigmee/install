@@ -64,6 +64,7 @@ IPFS_GODOT_EXAMPLE_BUILD = os.path.join(IPFS_GDNATIVE_PATH, "example", "build")
 CEF_GDNATIVE_PATH = os.path.join(GODOT_GDNATIVE_PATH, "browser")
 CEF_GODOT_EXAMPLE_BUILD = os.path.join(CEF_GDNATIVE_PATH, "example", "build")
 STIGMARK_GDNATIVE_PATH = os.path.join(GODOT_GDNATIVE_PATH, "stigmark")
+STIGMARK_GODOT_EXAMPLE_BUILD = os.path.join(STIGMARK_GDNATIVE_PATH, "examples", "godot", "build")
 GDCEF_PATH = os.path.join(CEF_GDNATIVE_PATH, "gdcef")
 GDCEF_PROCESSES_PATH = os.path.join(CEF_GDNATIVE_PATH, "gdcef_subprocess")
 GDCEF_THIRDPARTY_PATH = os.path.join(CEF_GDNATIVE_PATH, "thirdparty")
@@ -224,6 +225,8 @@ def install_godot_templates():
         TEMPLATES_PATH = os.environ.get("HOME") + "/.local/share/godot/templates"
     elif OSTYPE == "Windows":
         TEMPLATES_PATH = os.environ.get("APPDATA") + "\\Godot\\templates"
+    elif OSTYPE == "Darwin":
+        TEMPLATES_PATH = "~/Library/Application Support/Godot"
     else:
         fatal("Unknown archi: " + OSTYPE)
 
@@ -449,22 +452,22 @@ def compile_gdnative_cef(path):
 def compile_gdnative_stigmark():
     LIB_STIGMARK = os.path.join(STIGMARK_GDNATIVE_PATH, "target", "debug", "libstigmark_client")
     info("Compiling Godot stigmark (inside " + STIGMARK_GDNATIVE_PATH + ") ...")
-    os.chdir(STIGMARK_GDNATIVE_PATH)
+    os.chdir(os.path.join(STIGMARK_GDNATIVE_PATH, "examples", "console"))
     if OSTYPE == "Linux" or OSTYPE == "MinGW":
         run(["./build-linux.sh"], check=True)
-        os.chdir("src-stigmarkmod")
+        os.chdir(os.path.join(STIGMARK_GDNATIVE_PATH, "gdstigmark"))
         gdnative_scons_cmd("x11")
         copyfile(LIB_STIGMARK + ".so", STIGMEE_BUILD_PATH)
     elif OSTYPE == "Darwin":
         run(["./build-macosx.sh"], check=True)
-        os.chdir("src-stigmarkmod")
+        os.chdir(os.path.join(STIGMARK_GDNATIVE_PATH, "gdstigmark"))
         gdnative_scons_cmd("osx")
         copyfile(LIB_STIGMARK + ".dylib", STIGMEE_BUILD_PATH)
     else:
         run(["build-windows.cmd"], check=True)
         os.rename("target\debug\stigmark_client.dll", "target\debug\libstigmark_client.dll")
         os.rename("target\debug\stigmark_client.lib", "target\debug\libstigmark_client.lib")
-        os.chdir("src-stigmarkmod")
+        os.chdir(os.path.join(STIGMARK_GDNATIVE_PATH, "gdstigmark"))
         gdnative_scons_cmd("windows")
         copyfile(LIB_STIGMARK + ".dll", STIGMEE_BUILD_PATH)
 
@@ -492,6 +495,7 @@ def export_stigmee():
          STIGMEE_EXCEC_NAME)], check=True)
     symlink(os.path.join(STIGMEE_BUILD_PATH, STIGMEE_EXCEC_NAME), STIGMEE_ALIAS)
     symlink(STIGMEE_BUILD_PATH, CEF_GODOT_EXAMPLE_BUILD)
+    symlink(STIGMEE_BUILD_PATH, STIGMARK_GODOT_EXAMPLE_BUILD)
     symlink(STIGMEE_BUILD_PATH, IPFS_GODOT_EXAMPLE_BUILD)
 
 ###############################################################################
