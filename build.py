@@ -120,7 +120,8 @@ def install_system_packages():
              "scons", "pkg-config", "libx11-dev", "libxcursor-dev",
              "libxinerama-dev", "libgl1-mesa-dev", "libglu-dev",
              "libasound2-dev", "libpulse-dev", "libudev-dev",
-             "libxi-dev", "libxrandr-dev", "ninja-build", "libcurl",
+             "libxi-dev", "libxrandr-dev", "ninja-build", "libcurl4",
+             "libxcb-sync-dev", "libxcb-dri3-dev", "libxcb-present-dev",
              "libgtk-3-dev", "libssl-dev", "rustc", "sshpass"], check=True)
     elif OSTYPE == "Darwin":
         run(["brew", "install", "scons", "yasm", "cmake", "ninja", "curl",

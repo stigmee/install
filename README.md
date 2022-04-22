@@ -75,6 +75,10 @@ To upgrade your cmake you can see this [script](https://github.com/stigmee/doc-i
   - Rust: https://www.rust-lang.org/tools/install
   - cURL: https://curl.se/windows/microsoft.html
 
+**Still experimental:**
+The Stigmee Python3 build script `$WORKSPACE_STIGMEE/build.py`, through the command line `--install-packages`, can install
+system packages needed to compile Stigmee. You will need sudo and apt-get install for Linux, homebrew for MacOs X ...
+
 ### Step 4: Checkout your CMake version
 
 On Debian, Ubuntu you probably have to compile and install by yourself a newer version of CMake needed to compile
@@ -232,9 +236,6 @@ function update_stigmee()
 ## build.py command line
 
 The `./build.py` have command line. You can type `./build.py -h` to show the help.
-For example `./build.py --install-packages` will install system packages needed
-to compile Stigmee. You will need sudo and apt-get install for Linux, homebrew for
-MacOs X ...
 
 ## Continous integration and continous deployment
 
