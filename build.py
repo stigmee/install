@@ -392,15 +392,20 @@ def compile_cef():
                                          "packages\\install\\libcef_dll_wrapper_cmake"),
                             "CMakeLists.txt")
 
-        # Compile CEF with Ninja
+        # Windows: force compiling CEF as static library.
         if OSTYPE == "Windows":
             run(["cmake", "-DCEF_RUNTIME_LIBRARY_FLAG=/MD", "-DCMAKE_BUILD_TYPE=" + CEF_TARGET, "."], check=True)
             run(["cmake", "--build", ".", "--config", CEF_TARGET], check=True)
         else:
            mkdir("build")
            os.chdir("build")
-           run(["cmake", "-G", "Ninja", "-DCMAKE_BUILD_TYPE=" + CEF_TARGET, ".."], check=True)
-           run(["ninja", "-v", "-j" + NPROC, "cefsimple"], check=True)
+           # Compile CEF if Ninja is available else use default GNU Makefile
+           if shutil.which('ninja') != None:
+               run(["cmake", "-G", "Ninja", "-DCMAKE_BUILD_TYPE=" + CEF_TARGET, ".."], check=True)
+               run(["ninja", "-v", "-j" + NPROC, "cefsimple"], check=True)
+           else:
+               run(["cmake", "-G", "Unix Makefiles", "-DCMAKE_BUILD_TYPE=" + CEF_TARGET, ".."], check=True)
+               run(["make", "cefsimple", "-j" + NPROC], check=True)
         install_cef_assets()
 
 ###############################################################################
