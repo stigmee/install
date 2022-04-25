@@ -391,9 +391,6 @@ def compile_cef():
             shutil.copyfile(os.path.join(WORKSPACE_STIGMEE,
                                          "packages\\install\\libcef_dll_wrapper_cmake"),
                             "CMakeLists.txt")
-            #shutil.copyfile(os.path.join(WORKSPACE_STIGMEE,
-            #                             "packages\\install\\cef_variables_cmake"),
-            #                "cmake\\cef_variables.cmake")
 
         # Compile CEF with Ninja
         if OSTYPE == "Windows":
