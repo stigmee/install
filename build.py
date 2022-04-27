@@ -37,7 +37,6 @@ CEF_VERSION = "100.0.24+g0783cf8+chromium-100.0.4896.127"
 ### Check if WORKSPACE_STIGMEE is defined as environment variable in your
 ### operating system.
 WORKSPACE_STIGMEE = os.environ.get("WORKSPACE_STIGMEE")
-info("$WORKSPACE_STIGMEE=" + WORKSPACE_STIGMEE)
 if WORKSPACE_STIGMEE == None or WORKSPACE_STIGMEE == "":
     fatal("Please export the environment variable WORKSPACE_STIGMEE before "
           "calling this script:\n"
@@ -47,6 +46,7 @@ if WORKSPACE_STIGMEE == None or WORKSPACE_STIGMEE == "":
           "     set WORKSPACE_STIGMEE <c:\path\to\stigmee\workspace>\n"
           "And ideally save it in your ~/.bashrc file (Linux/Mac) or "
           "in RegEdit (Windows)")
+info("$WORKSPACE_STIGMEE=" + WORKSPACE_STIGMEE)
 
 ###############################################################################
 ### Set important Stigmee workspace pathes
