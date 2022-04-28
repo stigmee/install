@@ -69,6 +69,7 @@ GDCEF_PATH = os.path.join(CEF_GDNATIVE_PATH, "gdcef")
 GDCEF_PROCESSES_PATH = os.path.join(CEF_GDNATIVE_PATH, "gdcef_subprocess")
 GDCEF_THIRDPARTY_PATH = os.path.join(CEF_GDNATIVE_PATH, "thirdparty")
 CEF_PATH = os.path.join(GDCEF_THIRDPARTY_PATH, "cef_binary")
+STIGMEE_INSTALL_PATH = os.path.join(WORKSPACE_STIGMEE, "packages", "install")
 
 ###############################################################################
 ### By default compile the project in release mode (will be modified when
@@ -388,8 +389,7 @@ def compile_cef():
 
         # Apply patches for Windows
         if OSTYPE == "Windows":
-            shutil.copyfile(os.path.join(WORKSPACE_STIGMEE,
-                                         "packages\\install\\libcef_dll_wrapper_cmake"),
+            shutil.copyfile(os.path.join(STIGMEE_INSTALL_PATH, "patch", "CEF", "win", "libcef_dll_wrapper_cmake"),
                             "CMakeLists.txt")
 
         # Windows: force compiling CEF as static library.
