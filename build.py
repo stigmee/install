@@ -146,9 +146,7 @@ def create_stigmee_workspace():
              "clone the project ...")
         mkdir(WORKSPACE_STIGMEE)
         os.chdir(WORKSPACE_STIGMEE)
-        run(["tsrc", "--color=never", "--verbose", "init",
-             "git@github.com:stigmee/manifest.git"], check=True)
-        run(["tsrc", "--color=never", "--verbose", "sync"], check=True)
+        init_repositories()
 
     # Check if important folders are present to be sure we are in Stigmee
     # workspace.
@@ -520,6 +518,7 @@ def deploy_stigmee():
 ### Entry point
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Script for compiling Stigmee')
+    parser.add_argument('--sync', action='store_true', help='synchronize the workspace')
     parser.add_argument('--install-packages', action='store_true', help='Install needed operating system packages (as sudo)')
     parser.add_argument('--dont-compile-godot-editor', action='store_true', help='Do not compile Godot editor and install templates')
     parser.add_argument('--dont-compile-gdnative', action='store_true', help='Do not compile Godot natives')
@@ -529,14 +528,18 @@ if __name__ == "__main__":
     parser.add_argument('--debug', action='store_true', help='Compile Stigmee in debug mode (default: relase mode)')
     args = parser.parse_args()
 
-    set_compile_mode(args.debug)
-    if args.clean:
+    if args.sync:
+        os.chdir(WORKSPACE_STIGMEE)
+        sync_repositories()
+        sys.exit(0)
+    elif args.clean:
         err("Clean TBD")
         sys.exit(0)
     if args.install_packages:
         install_system_packages()
     else:
         info("[USER REQUEST] Skip installing needed operating system packages")
+    set_compile_mode(args.debug)
     create_stigmee_workspace()
     check_cmake_version("3.19")
     check_compiler()

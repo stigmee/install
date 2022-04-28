@@ -196,3 +196,26 @@ def check_cmake_version(min_version):
               + min_version + "\nSee " + WORKSPACE_STIGMEE +
               "/doc/internal/doc/install_latest_cmake.sh to update it before "
               "running this script")
+
+###############################################################################
+### Synchronize the workspace through a repository tool
+def sync_repositories():
+    if shutil.which('tsrc') != None:
+        run(["tsrc", "sync"], check=True)
+    elif shutil.which('repo') != None:
+        run(["repo", "sync"], check=True)
+    else:
+        fatal("Please install tsrc (python3 package) or Google's git-repo")
+
+###############################################################################
+### Initialize repos
+def init_repositories():
+    if shutil.which('tsrc') != None:
+        run(["tsrc", "--color=never", "--verbose", "init",
+             "git@github.com:stigmee/manifest.git"], check=True)
+        run(["tsrc", "--color=never", "--verbose", "sync"], check=True)
+    elif shutil.which('repo') != None:
+        run(["repo", "init", "git@github.com:stigmee/manifest.git"], check=True)
+        run(["repo", "sync"], check=True)
+    else:
+        fatal("Please install tsrc (python3 package) or Google's git-repo")
