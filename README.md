@@ -149,6 +149,8 @@ well, you will have the following workspace for Stigmee (may change):
 
 ## Compile Stigmee for Unix systems
 
+### Straight method
+
 To compile Stigmee for Linux (BSD untested) and MacOS X, either in debug mode:
 
 ```bash
@@ -162,7 +164,7 @@ Or in release mode:
 ```bash
 export $WORKSPACE_STIGMEE=<workspace_home>
 cd $WORKSPACE_STIGMEE
-./build.py release
+./build.py
 ```
 
 Once done, Stigmee binary is present in the `$WORKSPACE_STIGMEE/stigmee/build/` folder (for example for Linux `Stigmee.x11.debug.64`).
@@ -176,6 +178,11 @@ gdnlib file. So for the moment:
 ```bash
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$WORKSPACE_STIGMEE/stigmee/build
 ```
+
+### With Dockerfile (experimental)
+
+You can compile Stigmee through a Docker. See this [document](docker/README.md).
+
 ## Compile Stigmee for Windows
 
 To compile Stigmee for Windows, (only in release mode for now) :
