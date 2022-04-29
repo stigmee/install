@@ -194,14 +194,17 @@ def check_compiler():
 ### Check if cmake version is >= 3.19 needed by CEF
 def check_cmake_version(min_version):
     info("Checking cmake version ...")
+    if shutil.which('cmake') == None:
+        fatal("Your did not have CMake installed. See "
+              "doc/internal/doc/install_latest_cmake.sh to update it before "
+              "running this script")
     output = subprocess.check_output(["cmake", "--version"]).decode("utf-8")
     line = output.splitlines()[0]
     current_version = line.split()[2]
     if version.parse(current_version) < version.parse(min_version):
         fatal("Your CMake version is " + current_version + " but shall be >= "
-              + min_version + "\nSee " + WORKSPACE_STIGMEE +
-              "/doc/internal/doc/install_latest_cmake.sh to update it before "
-              "running this script")
+              + min_version + "\nSee /doc/internal/doc/install_latest_cmake.sh "
+              "to update it before running this script")
 
 ###############################################################################
 ### Synchronize the workspace through a repository tool
