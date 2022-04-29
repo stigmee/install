@@ -184,10 +184,10 @@ def compile_godot_editor():
     if valid_symlink(GODOT_EDITOR_ALIAS):
         info("Godot Editor already compiled !")
     else:
-        info("Compiling Godot Editor (inside " + GODOT_EDITOR_PATH + ") ...")
         os.chdir(GODOT_EDITOR_PATH)
         # Check if we are not running inside GitHub actions docker
         if not run_from_github_action():
+            info("Compiling Godot editor (inside " + GODOT_EDITOR_PATH + ") ...")
             if OSTYPE == "Linux":
                 run(["scons", "platform=linux", "target=" + GODOT_EDITOR_TARGET,
                      "--jobs=" + NPROC], check=True)
@@ -206,7 +206,7 @@ def compile_godot_editor():
         else:
             # GitHub actions: compile a Godot editor without X11 (godot
             # --no-window does not work with Linux but only on Windows)
-            info("Compiling Godot in headless mode ...")
+            info("Compiling headless Godot editor (inside " + GODOT_EDITOR_PATH + ") ...")
             run(["scons", "plateform=x11", "tools=no",
                  "vulkan=no x11=no", "target=" + GODOT_EDITOR_TARGET,
                  "--jobs=" + NPROC], check=True)
