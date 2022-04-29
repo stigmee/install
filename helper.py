@@ -23,7 +23,7 @@
 ###############################################################################
 
 import os, sys, re, platform, subprocess, hashlib, tarfile, wget, shutil, glob
-import zipfile, argparse, pysftp
+import zipfile, argparse, pysftp, getpass
 
 from multiprocessing import cpu_count
 from sysconfig import get_platform
@@ -31,6 +31,7 @@ from packaging import version
 from pathlib import Path
 from platform import machine, system
 from subprocess import run
+from datetime import datetime
 
 ###############################################################################
 ### Hack that seems to fix color issue for Windows
@@ -61,6 +62,11 @@ EXEC = ".exe" if OSTYPE == "Windows" else ""
 ###############################################################################
 ### Number of CPU cores
 NPROC = str(cpu_count())
+
+###############################################################################
+### Are this script run from a GitHub action docker ?
+def run_from_github_action():
+    return os.environ.get("GITHUB_ACTIONS") != None
 
 ###############################################################################
 ### Download artifacts
@@ -219,3 +225,24 @@ def init_repositories():
         run(["repo", "sync"], check=True)
     else:
         fatal("Please install tsrc (python3 package) or Google's git-repo")
+
+###############################################################################
+### Transfer files to our SFTP server.
+def deploy(files):
+    # Variables SFTP_STIGMEE_* are set as secrets to our GitHub repo and their
+    # contents are only available from GitHub actions. Else ask the user to type
+    # the command. TODO: better to use RSA key.
+    b = run_from_github_action()
+    host = os.environ.get("SFTP_STIGMEE_ADDRESS") if b else input("Address: ")
+    username = os.environ.get("SFTP_STIGMEE_USER") if b else input("User: ")
+    port = os.environ.get("SFTP_STIGMEE_PORT") if b else input("Port: ")
+    password = os.environ.get("SFTP_STIGMEE_PSWD") if b else getpass.getpass("Password: ")
+
+    cnopts = pysftp.CnOpts()
+    cnopts.hostkeys = None
+    sftp = pysftp.Connection(host = host, username = username, password = password,
+                             port = int(port), cnopts = cnopts)
+    for f in files:
+        info("Transfering " + f + " to server ...")
+        sftp.put(f)
+    sftp.close()

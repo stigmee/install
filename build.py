@@ -187,7 +187,7 @@ def compile_godot_editor():
         info("Compiling Godot Editor (inside " + GODOT_EDITOR_PATH + ") ...")
         os.chdir(GODOT_EDITOR_PATH)
         # Check if we are not running inside GitHub actions docker
-        if os.environ.get("GITHUB_ACTIONS") == None:
+        if not run_from_github_action():
             if OSTYPE == "Linux":
                 run(["scons", "platform=linux", "target=" + GODOT_EDITOR_TARGET,
                      "--jobs=" + NPROC], check=True)
@@ -502,17 +502,25 @@ def export_stigmee():
 ###############################################################################
 ### Deploy the Stigmee executable to our SFTP server
 def deploy_stigmee():
-    STIGMEE_TARBALL = STIGMEE_EXCEC_NAME + ".tar.bz2"
-    info("Deploying Stigme " + STIGMEE_TARBALL + " ...")
+    # Example of tarball name: Stigmee-Linux-2022-04-28.tar.bz2
+    date = datetime.now().strftime("%Y-%m-%d")
+    NEW_NAME = os.path.join(STIGMEE_PROJECT_PATH, "Stigmee-" + OSTYPE + "-" + date)
+    STIGMEE_TARBALL = NEW_NAME + ".tar.bz2"
+    STIGMEE_TARBALL_SHA1 = STIGMEE_TARBALL + ".sha1"
+    info("Packaging Stigmee as " + STIGMEE_TARBALL + " ...")
+    # Remove the tarball if already existing
+    if os.path.exists(NEW_NAME):
+        os.remove(NEW_NAME)
+    # Rename temporary the build folder with the Stigmee name
     os.chdir(STIGMEE_PROJECT_PATH)
-    os.rename("build", "Stigmee")
-    tarbz2(STIGMEE_TARBALL, "Stigmee")
-    os.rename("Stigmee", "build")
-    srv = pysftp.Connection(host=os.environ.get("SFTP_STIGMEE_ADDRESS"),
-                            username=os.environ.get("SFTP_STIGMEE_USER"),
-                            private_key="~/.ssh/stigmee-deploy-private-key")
-    srv.put(STIGMEE_TARBALL)
-    srv.close()
+    os.rename("build", NEW_NAME)
+    # For Windows: use rar
+    tarbz2(STIGMEE_TARBALL, NEW_NAME)
+    os.rename(NEW_NAME, "build")
+    # Create the SHA1 file
+    open(STIGMEE_TARBALL_SHA1, "w").write(compute_sha1(STIGMEE_TARBALL)).close()
+    # Transfer tarball and SHA1 file to our SFTP server.
+    deploy([STIGMEE_TARBALL, STIGMEE_TARBALL_SHA1])
 
 ###############################################################################
 ### Entry point
@@ -522,7 +530,7 @@ if __name__ == "__main__":
     parser.add_argument('--install-packages', action='store_true', help='Install needed operating system packages (as sudo)')
     parser.add_argument('--dont-compile-godot-editor', action='store_true', help='Do not compile Godot editor and install templates')
     parser.add_argument('--dont-compile-gdnative', action='store_true', help='Do not compile Godot natives')
-    parser.add_argument('--dont-export-stigmee', action='store_true', help='Do not compile Stigmee')
+    parser.add_argument('--dont-export-stigmee', action='store_true', help='Do not export Stigmee')
     parser.add_argument('--deploy-stigmee', action='store_true', help='Deploy Stigmee to a SFTP server')
     parser.add_argument('--clean', action='store_true', help='Clean the project')
     parser.add_argument('--debug', action='store_true', help='Compile Stigmee in debug mode (default: relase mode)')
