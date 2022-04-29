@@ -187,7 +187,7 @@ def compile_godot_editor():
         info("Compiling Godot Editor (inside " + GODOT_EDITOR_PATH + ") ...")
         os.chdir(GODOT_EDITOR_PATH)
         # Check if we are not running inside GitHub actions docker
-        if os.environ.get("$GITHUB_ACTIONS") == None:
+        if os.environ.get("GITHUB_ACTIONS") == None:
             if OSTYPE == "Linux":
                 run(["scons", "platform=linux", "target=" + GODOT_EDITOR_TARGET,
                      "--jobs=" + NPROC], check=True)
