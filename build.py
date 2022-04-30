@@ -416,7 +416,7 @@ def gdnative_scons_cmd(plateform):
              "platform=" + plateform], check=True)
 
 ###############################################################################
-###
+### Compile Godot IPFS module named GDIpfs
 def compile_gdnative_ipfs():
     info("Compiling Godot IPFS module (inside " + IPFS_GDNATIVE_PATH + ") ...")
     os.chdir(IPFS_GDNATIVE_PATH)
