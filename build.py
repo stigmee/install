@@ -444,10 +444,10 @@ def compile_gdnative_cef(path):
         fatal("Unknown archi " + OSTYPE + ": I dunno how to compile CEF module primary process")
 
 ###############################################################################
-### Compile Godot CEF module named GDCef
+### Compile Godot Stigmark module named GDStigmark
 def compile_gdnative_stigmark():
     LIB_STIGMARK = os.path.join(STIGMARK_GDNATIVE_PATH, "target", "debug", "libstigmark_client")
-    info("Compiling Godot stigmark (inside " + STIGMARK_GDNATIVE_PATH + ") ...")
+    info("Compiling Godot Stigmark (inside " + STIGMARK_GDNATIVE_PATH + ") ...")
     os.chdir(os.path.join(STIGMARK_GDNATIVE_PATH, "examples", "console"))
     if OSTYPE == "Linux" or OSTYPE == "MinGW":
         run(["./build-linux.sh"], check=True)
@@ -459,13 +459,18 @@ def compile_gdnative_stigmark():
         os.chdir(os.path.join(STIGMARK_GDNATIVE_PATH, "gdstigmark"))
         gdnative_scons_cmd("osx")
         copyfile(LIB_STIGMARK + ".dylib", STIGMEE_BUILD_PATH)
-    else:
+    elif OSTYPE == "Windows":
         run(["build-windows.cmd"], check=True)
-        os.rename("target\debug\stigmark_client.dll", "target\debug\libstigmark_client.dll")
-        os.rename("target\debug\stigmark_client.lib", "target\debug\libstigmark_client.lib")
+        # Rust for Window does not add the "lib" prefix, but we need common name to be
+        # compatible with Linux and Mac OS X.
+        os.chdir(os.path.join(STIGMARK_GDNATIVE_PATH, "target", "debug"))
+        os.rename("stigmark_client.dll", "libstigmark_client.dll")
+        os.rename("stigmark_client.lib", "libstigmark_client.lib")
         os.chdir(os.path.join(STIGMARK_GDNATIVE_PATH, "gdstigmark"))
         gdnative_scons_cmd("windows")
         copyfile(LIB_STIGMARK + ".dll", STIGMEE_BUILD_PATH)
+    else:
+        fatal("Unknown archi " + OSTYPE + ": I dunno how to compile Godot Stigmark")
 
 ###############################################################################
 ### Godot export command (they shall match names used inside the Godot project)
