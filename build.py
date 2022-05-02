@@ -511,10 +511,9 @@ def deploy_stigmee():
     # Remove the tarball if already existing
     if os.path.exists(NEW_NAME):
         os.remove(NEW_NAME)
-    # Rename temporary the build folder with the Stigmee name
+    # Rename temporary the build folder with the Stigmee name before compressing it
     os.chdir(STIGMEE_PROJECT_PATH)
     os.rename("build", NEW_NAME)
-    # For Windows: use rar
     tarbz2(STIGMEE_TARBALL, NEW_NAME)
     os.rename(NEW_NAME, "build")
     # Create the SHA1 file
