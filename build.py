@@ -518,7 +518,9 @@ def deploy_stigmee():
     tarbz2(STIGMEE_TARBALL, NEW_NAME)
     os.rename(NEW_NAME, "build")
     # Create the SHA1 file
-    open(STIGMEE_TARBALL_SHA1, "w").write(compute_sha1(STIGMEE_TARBALL)).close()
+    f = open(STIGMEE_TARBALL_SHA1, "w")
+    f.write(compute_sha1(STIGMEE_TARBALL))
+    f.close()
     # Transfer tarball and SHA1 file to our SFTP server.
     deploy([STIGMEE_TARBALL, STIGMEE_TARBALL_SHA1])
 
