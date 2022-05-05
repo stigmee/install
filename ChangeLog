@@ -1,2 +1,7 @@
+Version 0.2.0:
+	* Merged bash and batch files into a unique Python script running for Linux and Windows.
+        * Stable version of the unique Python script.
+
 Version 0.1.0:
-	* Initial version.
+	* Initial version with a duplicated script for each operating system (bash
+          for Linux/Mac, batch for Windows).
