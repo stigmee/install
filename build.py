@@ -405,13 +405,13 @@ def compile_cef():
 ### Common Scons command for compiling our Godot gdnative modules
 def gdnative_scons_cmd(plateform):
     if OSTYPE == "Darwin":
-        run(["scons", "workspace=" + WORKSPACE_STIGMEE,
-             "godot_version=" + GODOT_VERSION,
+        run(["scons", "api_path=" + GODOT_CPP_PATH,
+             "build_path=" + STIGMEE_BUILD_PATH,
              "target=" + GODOT_CPP_TARGET, "--jobs=" + NPROC,
              "arch=" + ARCHI, "platform=" + plateform], check=True)
     else: # FIXME "arch=" + ARCHI not working
-        run(["scons", "workspace=" + WORKSPACE_STIGMEE,
-             "godot_version=" + GODOT_VERSION,
+        run(["scons", "api_path=" + GODOT_CPP_PATH,
+             "build_path=" + STIGMEE_BUILD_PATH,
              "target=" + GODOT_CPP_TARGET, "--jobs=" + NPROC,
              "platform=" + plateform], check=True)
 
@@ -494,6 +494,7 @@ def export_stigmee():
     run([GODOT_EDITOR_ALIAS, "--no-window", "--export",
          godot_export_command(), os.path.join(STIGMEE_BUILD_PATH,
          STIGMEE_EXCEC_NAME)], check=True)
+    rmdir(CEF_GODOT_EXAMPLE_BUILD) # Since can be either an alias or a folder
     symlink(os.path.join(STIGMEE_BUILD_PATH, STIGMEE_EXCEC_NAME), STIGMEE_ALIAS)
     symlink(STIGMEE_BUILD_PATH, CEF_GODOT_EXAMPLE_BUILD)
     symlink(STIGMEE_BUILD_PATH, STIGMARK_GODOT_EXAMPLE_BUILD)
