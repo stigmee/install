@@ -91,6 +91,13 @@ To download Stigmee workspace, we have set the manifest file for `tsrc` tool to 
 A manifest is a file holding info such as git repos the project needs and where in the workspace to download
 them. For more information see this [document](https://github.com/stigmee/manifest).
 
+If you still prefering using HTTPS, you can configure your git settings:
+```
+git config --global url."https://github".insteadOf git://github
+```
+
+See here for more informartion: https://ricostacruz.com/til/github-always-ssh
+
 ## Download Stigmee workspace
 
 For more information on how to keep your workspace up-to-date see this [document](https://github.com/stigmee/manifest).
