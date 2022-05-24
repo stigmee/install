@@ -110,7 +110,7 @@ def untarbz2(tar_bz2_file_name, dest_dir):
             name = tarinfo.name.replace(root_dir, dest_dir)
             print(" - %s" % name)
             if tarinfo.isdir():
-                os.mkdir(name)
+                mkdir(name)
                 continue
             tarinfo.name = name
             f.extract(tarinfo, "")
