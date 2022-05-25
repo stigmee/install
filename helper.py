@@ -148,10 +148,14 @@ def valid_symlink(path):
 
 ###############################################################################
 ### Equivalent to test -L e on alias + ln -s
-def symlink(src, dst):
+def symlink(src, dst, force=False):
     p = Path(dst);
     if p.is_symlink():
         os.remove(p)
+    elif force and p.is_file():
+        os.remove(p)
+    elif force and p.is_dir():
+        rmdir(dst)
     os.symlink(src, dst)
 
 ###############################################################################

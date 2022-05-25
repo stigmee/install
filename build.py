@@ -494,11 +494,11 @@ def export_stigmee():
     run([GODOT_EDITOR_ALIAS, "--no-window", "--export",
          godot_export_command(), os.path.join(STIGMEE_BUILD_PATH,
          STIGMEE_EXCEC_NAME)], check=True)
-    rmdir(CEF_GODOT_EXAMPLE_BUILD) # Since can be either an alias or a folder
-    symlink(os.path.join(STIGMEE_BUILD_PATH, STIGMEE_EXCEC_NAME), STIGMEE_ALIAS)
-    symlink(STIGMEE_BUILD_PATH, CEF_GODOT_EXAMPLE_BUILD)
-    symlink(STIGMEE_BUILD_PATH, STIGMARK_GODOT_EXAMPLE_BUILD)
-    symlink(STIGMEE_BUILD_PATH, IPFS_GODOT_EXAMPLE_BUILD)
+
+    symlink(os.path.join(STIGMEE_BUILD_PATH, STIGMEE_EXCEC_NAME), STIGMEE_ALIAS, force=True)
+    symlink(STIGMEE_BUILD_PATH, CEF_GODOT_EXAMPLE_BUILD, force=True)
+    symlink(STIGMEE_BUILD_PATH, STIGMARK_GODOT_EXAMPLE_BUILD, force=True)
+    symlink(STIGMEE_BUILD_PATH, IPFS_GODOT_EXAMPLE_BUILD, force=True)
 
 ###############################################################################
 ### Deploy the Stigmee executable to our SFTP server
