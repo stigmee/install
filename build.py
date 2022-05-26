@@ -226,7 +226,7 @@ def install_godot_templates():
         fatal("Unknown archi: " + OSTYPE)
 
     # From "3.4.3-stable" separate "3.4.3" and "stable" we need
-    # both of them and convert the '-' to '.'
+    # both of them and convert the "-" to "."
     version = GODOT_VERSION.split("-")
     TEMPLATE_FOLDER_NAME = version[0]
     if version[1] != None:
@@ -345,7 +345,7 @@ def download_cef():
     if grep(os.path.join(CEF_PATH, "README.txt"), CEF_VERSION) != None:
         info(CEF_VERSION + " already downloaded")
     else:
-        # Replace the '+' chars by URL percent encoding '%2B'
+        # Replace the "+" chars by URL percent encoding "%2B"
         CEF_URL_VERSION = CEF_VERSION.replace("+", "%2B")
         CEF_TARBALL = "cef_binary_" + CEF_URL_VERSION + "_" + CEF_ARCHI + ".tar.bz2"
         info("Downloading Chromium Embedded Framework into " + CEF_PATH + " ...")
@@ -393,7 +393,7 @@ def compile_cef():
            mkdir("build")
            os.chdir("build")
            # Compile CEF if Ninja is available else use default GNU Makefile
-           if shutil.which('ninja') != None:
+           if shutil.which("ninja") != None:
                run(["cmake", "-G", "Ninja", "-DCMAKE_BUILD_TYPE=" + CEF_TARGET, ".."], check=True)
                run(["ninja", "-v", "-j" + NPROC, "cefsimple"], check=True)
            else:
@@ -527,15 +527,15 @@ def deploy_stigmee():
 ###############################################################################
 ### Entry point
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Script for compiling Stigmee')
-    parser.add_argument('--sync', action='store_true', help='synchronize the workspace')
-    parser.add_argument('--install-packages', action='store_true', help='Install needed operating system packages (as sudo)')
-    parser.add_argument('--dont-compile-godot-editor', action='store_true', help='Do not compile Godot editor and install templates')
-    parser.add_argument('--dont-compile-gdnative', action='store_true', help='Do not compile Godot natives')
-    parser.add_argument('--dont-export-stigmee', action='store_true', help='Do not export Stigmee')
-    parser.add_argument('--deploy-stigmee', action='store_true', help='Deploy Stigmee to a SFTP server')
-    parser.add_argument('--clean', action='store_true', help='Clean the project')
-    parser.add_argument('--debug', action='store_true', help='Compile Stigmee in debug mode (default: relase mode)')
+    parser = argparse.ArgumentParser(description="Script for compiling Stigmee")
+    parser.add_argument("--sync", action="store_true", help="synchronize the workspace")
+    parser.add_argument("--install-packages", action="store_true", help="Install needed operating system packages (as sudo)")
+    parser.add_argument("--dont-compile-godot-editor", action="store_true", help="Do not compile Godot editor and install templates")
+    parser.add_argument("--dont-compile-gdnative", action="store_true", help="Do not compile Godot natives")
+    parser.add_argument("--dont-export-stigmee", action="store_true", help="Do not export Stigmee")
+    parser.add_argument("--deploy-stigmee", action="store_true", help="Deploy Stigmee to a SFTP server")
+    parser.add_argument("--clean", action="store_true", help="Clean the project")
+    parser.add_argument("--debug", action="store_true", help="Compile Stigmee in debug mode (default: relase mode)")
     args = parser.parse_args()
 
     if args.sync:

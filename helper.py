@@ -72,7 +72,7 @@ def run_from_github_action():
 ### Download artifacts
 def download(url):
     wget.download(url)
-    print('', flush=True)
+    print("", flush=True)
 
 ###############################################################################
 ### Equivalent to cp --verbose
@@ -125,7 +125,7 @@ def tarbz2(tarball_name, source_dir):
 ###############################################################################
 ### Equivalent to unzip
 def unzip(path_to_zip_file):
-    with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
+    with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
         zip_ref.extractall()
 
 ###############################################################################
@@ -163,7 +163,7 @@ def symlink(src, dst, force=False):
 def compute_sha1(artifact):
     CHUNK = 1 * 1024 * 1024
     sha1 = hashlib.sha1()
-    with open(artifact, 'rb') as f:
+    with open(artifact, "rb") as f:
         while True:
             data = f.read(CHUNK)
             if not data:
@@ -183,7 +183,7 @@ def read_sha1_file(path_sha1):
 ### Check if compilers are present
 def check_compiler():
     if OSTYPE == "Windows":
-        with open("win.cc", 'w') as f:
+        with open("win.cc", "w") as f:
             f.write("#include <windows.h>\r\n")
             f.write("int main(int argc, char **argv) { return 0; }")
         if os.system("cl.exe /Fe:win.exe win.cc") != 0:
@@ -198,7 +198,7 @@ def check_compiler():
 ### Check if cmake version is >= 3.19 needed by CEF
 def check_cmake_version(min_version):
     info("Checking cmake version ...")
-    if shutil.which('cmake') == None:
+    if shutil.which("cmake") == None:
         fatal("Your did not have CMake installed. See "
               "doc/internal/doc/install_latest_cmake.sh to update it before "
               "running this script")
@@ -213,9 +213,9 @@ def check_cmake_version(min_version):
 ###############################################################################
 ### Synchronize the workspace through a repository tool
 def sync_repositories():
-    if shutil.which('tsrc') != None:
+    if shutil.which("tsrc") != None:
         run(["tsrc", "sync"], check=True)
-    elif shutil.which('repo') != None:
+    elif shutil.which("repo") != None:
         run(["repo", "sync"], check=True)
     else:
         fatal("Please install tsrc (python3 package) or Google's git-repo")
@@ -223,11 +223,11 @@ def sync_repositories():
 ###############################################################################
 ### Initialize repos
 def init_repositories():
-    if shutil.which('tsrc') != None:
+    if shutil.which("tsrc") != None:
         run(["tsrc", "--color=never", "--verbose", "init",
              "git@github.com:stigmee/manifest.git"], check=True)
         run(["tsrc", "--color=never", "--verbose", "sync"], check=True)
-    elif shutil.which('repo') != None:
+    elif shutil.which("repo") != None:
         run(["repo", "init", "git@github.com:stigmee/manifest.git"], check=True)
         run(["repo", "sync"], check=True)
     else:
