@@ -446,31 +446,35 @@ def compile_gdnative_cef(path):
 ###############################################################################
 ### Compile Godot Stigmark module named GDStigmark
 def compile_gdnative_stigmark():
-    LIB_STIGMARK = os.path.join(STIGMARK_GDNATIVE_PATH, "target", "debug", "libstigmark_client")
+    # Compile Rust lib
     info("Compiling Godot Stigmark (inside " + STIGMARK_GDNATIVE_PATH + ") ...")
     os.chdir(os.path.join(STIGMARK_GDNATIVE_PATH, "examples", "console"))
+    LIB_STIGMARK = os.path.join(STIGMARK_GDNATIVE_PATH, "target", "debug", "libstigmark_client")
     if OSTYPE == "Linux" or OSTYPE == "MinGW":
         run(["./build-linux.sh"], check=True)
-        os.chdir(os.path.join(STIGMARK_GDNATIVE_PATH, "gdstigmark"))
-        gdnative_scons_cmd("x11")
         copyfile(LIB_STIGMARK + ".so", STIGMEE_BUILD_PATH)
     elif OSTYPE == "Darwin":
         run(["./build-macosx.sh"], check=True)
-        os.chdir(os.path.join(STIGMARK_GDNATIVE_PATH, "gdstigmark"))
-        gdnative_scons_cmd("osx")
         copyfile(LIB_STIGMARK + ".dylib", STIGMEE_BUILD_PATH)
     elif OSTYPE == "Windows":
         run(["build-windows.cmd"], check=True)
         # Rust for Window does not add the "lib" prefix, but we need common name to be
         # compatible with Linux and Mac OS X.
-        os.chdir(os.path.join(STIGMARK_GDNATIVE_PATH, "target", "debug"))
-        os.rename("stigmark_client.dll", "libstigmark_client.dll")
-        os.rename("stigmark_client.lib", "libstigmark_client.lib")
-        os.chdir(os.path.join(STIGMARK_GDNATIVE_PATH, "gdstigmark"))
-        gdnative_scons_cmd("windows")
+        #os.chdir(os.path.join(STIGMARK_GDNATIVE_PATH, "target", "debug"))
+        #os.rename("gdstigmark.dll", "libgdstigmark.dll")
+        #os.rename("gdstigmark.lib", "libgdstigmark.lib")
         copyfile(LIB_STIGMARK + ".dll", STIGMEE_BUILD_PATH)
     else:
         fatal("Unknown archi " + OSTYPE + ": I dunno how to compile Godot Stigmark")
+
+    # Compile Godot native lib
+    os.chdir(os.path.join(STIGMARK_GDNATIVE_PATH, "gdstigmark"))
+    if OSTYPE == "Linux" or OSTYPE == "MinGW":
+        gdnative_scons_cmd("x11")
+    elif OSTYPE == "Darwin":
+        gdnative_scons_cmd("osx")
+    elif OSTYPE == "Windows":
+        gdnative_scons_cmd("windows")
 
 ###############################################################################
 ### Godot export command (they shall match names used inside the Godot project)
