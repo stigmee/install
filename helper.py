@@ -183,16 +183,25 @@ def read_sha1_file(path_sha1):
 ### Check if compilers are present
 def check_compiler():
     if OSTYPE == "Windows":
-        with open("win.cc", "w") as f:
-            f.write("#include <windows.h>\r\n")
+        cppfile = "win.cc"
+        binfile = "win.exe"
+        objfile = "win.obj"
+        with open(cppfile, "w") as f:
+            f.write("#include <windows.h>\n")
             f.write("int main(int argc, char **argv) { return 0; }")
-        if os.system("cl.exe /Fe:win.exe win.cc") != 0:
+        if os.system("cl.exe /Fe:" + binfile + " " + cppfile) != 0:
+            os.remove(cppfile)
             fatal("MS C++ compiler is not found")
-        if os.path.isfile("win.exe") == False:
+        if os.path.isfile(binfile) == False:
+            os.remove(cppfile)
             fatal("MS C++ compiler is not working")
-        if os.system("win.exe") != 0:
+        if os.system(binfile) != 0:
+            os.remove(cppfile)
             fatal("MS C++ compiler could not compile test program")
         info("MS C++ Compiler OK")
+        os.remove(cppfile)
+        os.remove(binfile)
+        os.remove(objfile)
 
 ###############################################################################
 ### Check if cmake version is >= 3.19 needed by CEF
