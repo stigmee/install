@@ -1,6 +1,6 @@
 ###############################################################################
 ## Stigmee: A 3D browser and decentralized social network.
-## Copyright 2022 Quentin Quadrat <lecrapouille@gmail.com>
+## Copyright 2021 Quentin Quadrat <lecrapouille@gmail.com>
 ##
 ## This file is part of Stigmee.
 ##
@@ -22,12 +22,15 @@ name: Compile and release Stigmee on GitHub
 on:
   workflow_dispatch:
     branches:
-      - main
+      - master
 
 env:
   WORKSPACE_STIGMEE: ${{ github.workspace }}\workspace_stigmee
 
 jobs:
+  #############################################################################
+  ### Windows
+  #############################################################################
   export_windows:
     runs-on: windows-2022
     steps:
@@ -41,15 +44,13 @@ jobs:
       shell: powershell
       run: |
         echo ${{ env.WORKSPACE_STIGMEE }}
-        python3 -m pip install scons
-        python3 -m pip install tsrc
-        python3 -m pip install requests
+        python3 -m pip install packaging python3_wget scons tsrc pysftp
 
     - name: Cloning Stigmee project
       shell: powershell
       run: |
         git config --global url."https://${{ secrets.ACCESS_TOKEN }}@github.com/".insteadOf git@github.com:
-        mkdir ${{ env.WORKSPACE_STIGMEE }}
+        mkdir -p ${{ env.WORKSPACE_STIGMEE }}
         cd ${{ env.WORKSPACE_STIGMEE }}
         tsrc init git@github.com:stigmee/manifest.git
         tsrc sync
@@ -58,4 +59,34 @@ jobs:
       shell: powershell
       run: |
         cd ${{ env.WORKSPACE_STIGMEE }}
-        .\build_win.bat
+        .\build.py
+
+  #############################################################################
+  ### Linux
+  #############################################################################
+  export_linux:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Update system packages
+      run: |
+        sudo apt-get update
+        sudo apt-get install xvfb
+
+    - name: Installing Python3 packages
+      run: |
+        sudo apt-get update
+        python3 -m pip install packaging python3_wget scons tsrc pysftp
+
+    - name: Cloning Stigmee project
+      run: |
+        git config --global url."https://${{ secrets.ACCESS_TOKEN }}@github.com/".insteadOf git@github.com:
+        mkdir -p ${{ env.WORKSPACE_STIGMEE }}
+        cd ${{ env.WORKSPACE_STIGMEE }}
+        tsrc init git@github.com:stigmee/manifest.git
+        tsrc sync
+
+    - name: Compiling Stigmee project in release mode
+      run: |
+        sudo /usr/bin/Xvfb :0 -screen 0 800x600x32 &
+        cd ${{ env.WORKSPACE_STIGMEE }}
+        ./build.py
