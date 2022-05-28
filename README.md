@@ -158,20 +158,20 @@ well, you will have the following workspace for Stigmee (may change):
 
 ### Straight method
 
-To compile Stigmee for Linux (BSD untested) and MacOS X, either in debug mode:
-
-```bash
-export $WORKSPACE_STIGMEE=<workspace_home>
-cd $WORKSPACE_STIGMEE
-./build.py debug
-```
-
-Or in release mode:
+To compile Stigmee for Linux (BSD untested) and MacOS X, either in release mode:
 
 ```bash
 export $WORKSPACE_STIGMEE=<workspace_home>
 cd $WORKSPACE_STIGMEE
 ./build.py
+```
+
+Or in debug mode:
+
+```bash
+export $WORKSPACE_STIGMEE=<workspace_home>
+cd $WORKSPACE_STIGMEE
+./build.py --debug
 ```
 
 Once done, Stigmee binary is present in the `$WORKSPACE_STIGMEE/stigmee/build/` folder (for example for Linux `Stigmee.x11.debug.64`).
@@ -192,7 +192,7 @@ You can compile Stigmee through a Docker. See this [document](docker/README.md).
 
 ## Compile Stigmee for Windows
 
-To compile Stigmee for Windows, (only in release mode for now) :
+To compile Stigmee for Windows:
 - Ensure VS2022 is installed
 - Open an **x64 Native Tools Command Prompt for VS 2022**, with **Administrator** privilege (this should be available in the start menu under Visual Studio 2022). This ensures the environment is correctly set to use the VS tools.
 - Run the below commands from this command line :
@@ -243,7 +243,7 @@ function update_stigmee()
         tsrc sync
     fi
 
-    ./build.py release
+    ./build.py
 }
 ```
 
