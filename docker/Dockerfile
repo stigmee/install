@@ -25,11 +25,16 @@
 #   docker login
 #   docker tag stigmee:latest lecrapouille/stigmee:latest
 #   docker push lecrapouille/stigmee:latest
-# How to use this docker:
+# How to use this docker. Firstly, run docker against your empty Stigmee
+# workspace:
 #   mkdir <WORKSPACE_STIGMEE>
 #   cd <WORKSPACE_STIGMEE>
 #   docker run --rm -it -v $(pwd):$(pwd) -w $(pwd) stigmee:latest
-#
+# Secondly, you can download the Stigmee workspace:
+#   tsrc --color=never --verbose init git@github.com:stigmee/manifest.git
+#   tsrc --color=never --verbose sync
+# Thirdly, compile Stigmee:
+#   ./build.py
 ###############################################################################
 
 # Debian 11
@@ -44,7 +49,7 @@ RUN apt-get install -y build-essential scons build-essential yasm scons pkg-conf
 RUN apt-get install -y libxinerama-dev libgl1-mesa-dev libglu-dev libasound2-dev libpulse-dev libudev-dev libxi-dev
 RUN apt-get install -y libxrandr-dev ninja-build libcurl4 libcurl4-openssl-dev libssl-dev sshpass
 RUN apt-get install -y libnss3 libpango1.0-dev libcairo2-dev libatk1.0-dev libatk-bridge2.0-dev libatspi2.0-dev libcups2-dev
-RUN apt-get install -y libxkbcommon-dev libxcomposite-dev
+RUN apt-get install -y libxkbcommon-dev libxcomposite-dev xvfb
 
 # Create alias to bash (just in case of)
 RUN if [ ! -e "/usr/bin/bash" ]; then ln -ns /bin/bash /usr/bin/bash; fi
@@ -75,6 +80,10 @@ RUN git config --system url."https://github.com/".insteadOf git@github.com:
 # Need to be root.
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# The mkdir command should fix the following error in console when starting Xvfb:
+# > _XSERVTransmkdir: ERROR: euid != 0,directory /tmp/.X11-unix will not be created
+RUN mkdir -p /tmp/.X11-unix
 
 # Create Stigmee user and activate it.
 ENV USER "stigmeer"
