@@ -458,11 +458,6 @@ def compile_gdnative_stigmark():
         copyfile(LIB_STIGMARK + ".dylib", STIGMEE_BUILD_PATH)
     elif OSTYPE == "Windows":
         run(["build-windows.cmd"], check=True)
-        # Rust for Window does not add the "lib" prefix, but we need common name to be
-        # compatible with Linux and Mac OS X.
-        #os.chdir(os.path.join(STIGMARK_GDNATIVE_PATH, "target", "debug"))
-        #os.rename("gdstigmark.dll", "libgdstigmark.dll")
-        #os.rename("gdstigmark.lib", "libgdstigmark.lib")
         copyfile(LIB_STIGMARK + ".dll", STIGMEE_BUILD_PATH)
     else:
         fatal("Unknown archi " + OSTYPE + ": I dunno how to compile Godot Stigmark")
