@@ -2,8 +2,8 @@
 
 ## Operating systems
 
-Stigmee can be compiled for Linux, Windows >= 10, and MacOS X. Stigmee is not yet functional for MacOS X.
-Stigmee is not supported for Windows 9 and older. In the future Stigmee is expected to run for Android
+Stigmee can be compiled for Linux, Windows >= 10 (and with the administration rights), and MacOS X. Stigmee is not yet functional for MacOS X.
+Stigmee is not supported for Windows 9 and older or Windows 10 without administration rights. In the future Stigmee is expected to run for Android
 and IOS devices. Your help is welcome!
 
 For compiling Stigmee, you will need an operating system with > 2 Gb of RAM and > 14 Gb of free disk space.
@@ -43,9 +43,9 @@ set WORKSPACE_STIGMEE c:\workspace_stigmee
 
 ### Step 2: Install Python3 packages
 
-Our `build.py` script is made in Python3 to be usable for any operating systems (Linux,
-MacOS X, Windows). To make it working, you will have to install the following python3
-modules:
+Our `build.py` script is made in **Python3** to be usable for any operating systems (Linux,
+MacOS X, Windows). Please donot use Python 2. To make the installation possible, you will
+have to install the following python3 modules:
 
 ```
 python3 -m pip install packaging python3_wget scons tsrc pysftp
@@ -72,8 +72,8 @@ To upgrade your cmake you can see this [script](https://github.com/stigmee/doc-i
   - CMake: https://cmake.org/download/
   - Ninja: https://ninja-build.org/
   - Git: https://git-scm.com/download/win
-  - Rust: https://www.rust-lang.org/tools/install
   - cURL: https://curl.se/windows/microsoft.html
+  - Rust: https://www.rust-lang.org/tools/install (For Windows users: https://doc.rust-lang.org/cargo/getting-started/installation.html install rustup-init.exe with administrator rights).
 
 **Still experimental:**
 The Stigmee Python3 build script `$WORKSPACE_STIGMEE/build.py`, through the command line `--install-packages`, can install
@@ -97,6 +97,7 @@ git config --global url."https://github".insteadOf git://github
 ```
 
 See here for more informartion: https://ricostacruz.com/til/github-always-ssh
+(but it may conflicts with Rust when installing its own packages by git cloning).
 
 ## Download Stigmee workspace
 
@@ -114,9 +115,9 @@ tsrc --color=never --verbose sync
 
 - For Windows 10:
 
-You have to use **x64 Native Tools Command Prompt for VS 2022**
+**Mandatory:** You **shall** to use **x64 Native Tools Command Prompt for VS 2022**
 (installed when you have installed Visual Studio 2022) with **administrator**
-permissions. Permissions is important to let create aliases.
+permissions to allow the creation of aliases!
 
 ```
 mkdir %WORKSPACE_STIGMEE%
@@ -138,7 +139,7 @@ well, you will have the following workspace for Stigmee (may change):
  ┃ ┣ 📂API               ➡️ Public documentation
  ┃ ┗ 📂internal          ➡️ Stigmee documention
  ┣ 📂godot
- ┃ ┣ 📂3.4.2
+ ┃ ┣ 📂3.4.3
  ┃ ┃ ┣ 📂editor          ➡️ To compile the Godot editor
  ┃ ┃ ┗ 📂cpp             ➡️ Godot C++ API
  ┃ ┗ 📂gdnative          ➡️ Stigmee modules as Godot native modules
@@ -176,7 +177,11 @@ cd $WORKSPACE_STIGMEE
 
 Once done, Stigmee binary is present in the `$WORKSPACE_STIGMEE/stigmee/build/` folder (for example for Linux `Stigmee.x11.debug.64`).
 
-**Note:** This command will also compile localy a Godot editor (version 3.4.2-stable) and use it. Used it to develop the Stigmee
+**Note:** If the `build.py` failes by indicating it does not know to access to `from helper import *` please check:
+- if `build.py` is an aliase (Windows user shall have administrator rights).
+- Call `build.py` from the folder `$WORKSPACE_STIGMEE/packages/install`.
+
+**Note:** This command will also compile localy a Godot editor (version 3.4.3-stable) and use it. Used it to develop the Stigmee
 application and to export (aka compiling) Stigmee binaries.
 
 **Workaround:** For Linux, for the moment, Stigme does not find correctly the libcef.so while indicated in the
