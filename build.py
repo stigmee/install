@@ -348,6 +348,7 @@ def download_cef():
         # Replace the "+" chars by URL percent encoding "%2B"
         CEF_URL_VERSION = CEF_VERSION.replace("+", "%2B")
         CEF_TARBALL = "cef_binary_" + CEF_URL_VERSION + "_" + CEF_ARCHI + ".tar.bz2"
+        SHA1_CEF_TARBALL = CEF_TARBALL + ".sha1"
         info("Downloading Chromium Embedded Framework into " + CEF_PATH + " ...")
 
         # Remove the CEF folder if exist and partial downloaded folder
@@ -357,12 +358,11 @@ def download_cef():
 
         # Download CEF at https://cef-builds.spotifycdn.com/index.html
         URL = "https://cef-builds.spotifycdn.com/" + CEF_TARBALL
-        info(URL)
-        download(URL)
-        download(URL + ".sha1")
-        if compute_sha1(CEF_TARBALL) != read_sha1_file(CEF_TARBALL + ".sha1"):
+        download(URL, CEF_TARBALL)
+        download(URL + ".sha1", SHA1_CEF_TARBALL)
+        if compute_sha1(CEF_TARBALL) != read_sha1_file(SHA1_CEF_TARBALL):
             os.remove(CEF_TARBALL)
-            os.remove(CEF_TARBALL + ".sha1")
+            os.remove(SHA1_CEF_TARBALL)
             fatal("Downloaded CEF tarball does not match expected SHA1. Please retry!")
 
         # Simplify the folder name by removing the complex version number
@@ -370,7 +370,7 @@ def download_cef():
 
         # Remove useless files
         os.remove(CEF_TARBALL)
-        os.remove(CEF_TARBALL + ".sha1")
+        os.remove(SHA1_CEF_TARBALL)
 
 ###############################################################################
 ### Compile Chromium Embedded Framework cefsimple example if not already made

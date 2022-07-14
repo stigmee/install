@@ -52,7 +52,8 @@ systems (Linux, MacOS X, Windows). Please do not use Python 2. To make the
 installation possible, you will have to install the following python3 modules:
 
 ```
-python3 -m pip install packaging python3_wget scons tsrc pysftp
+# python3 -m pip install tsrc scons packaging pysftp urllib3 progressbar
+python3 -m pip  install -r requirements.txt
 ```
 
 - `scons` is a Makefile made in Python and it is needed to compile Godot.
@@ -60,7 +61,7 @@ python3 -m pip install packaging python3_wget scons tsrc pysftp
   follow instruction depicted in this
   [repository](https://github.com/stigmee/manifest) to install the tool that
   will help you to keep up-to-date the Stigmee workspace.
-- `python3_wget` and `packaging` are needed to download and unarchive some tarballs.
+- `urllib3` and `packaging` are needed to download and unarchive some tarballs.
 - `pysftp` is optional and only needed for deploying releases our SFTP server.
 
 ### Step 3: Install system packages

@@ -22,8 +22,8 @@
 ###
 ###############################################################################
 
-import os, sys, re, platform, subprocess, hashlib, tarfile, wget, shutil, glob
-import zipfile, argparse, pysftp, getpass
+import os, sys, re, platform, subprocess, hashlib, tarfile, shutil, glob
+import zipfile, argparse, pysftp, getpass, progressbar, urllib.request
 
 from multiprocessing import cpu_count
 from sysconfig import get_platform
@@ -69,10 +69,29 @@ def run_from_github_action():
     return os.environ.get("GITHUB_ACTIONS") != None
 
 ###############################################################################
+### Needed for urllib.request.urlretrieve
+### See https://stackoverflow.com/a/53643011/8877076
+class MyProgressBar():
+    def __init__(self):
+        self.pbar = None
+
+    def __call__(self, block_num, block_size, total_size):
+        if not self.pbar:
+            self.pbar=progressbar.ProgressBar(maxval=total_size)
+            self.pbar.start()
+
+        downloaded = block_num * block_size
+        if downloaded < total_size:
+            self.pbar.update(downloaded)
+        else:
+            self.pbar.finish()
+
+###############################################################################
 ### Download artifacts
-def download(url):
-    wget.download(url)
-    print("", flush=True)
+def download(url, destination):
+    info(url)
+    urllib.request.urlretrieve(url, destination, reporthook=MyProgressBar())
+    print('', flush=True)
 
 ###############################################################################
 ### Equivalent to cp --verbose

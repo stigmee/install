@@ -1,6 +1,7 @@
 packaging==21.3
 pysftp==0.2.9
-python3_wget==0.0.2b1
+urllib3
+progressbar33==2.4
 scons==4.3.0
 tsrc==2.6.0
 wget==3.2
