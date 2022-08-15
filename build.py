@@ -30,7 +30,7 @@ from helper import *
 
 ###############################################################################
 ### Desired third part versions
-GODOT_VERSION = "3.4.3-stable"
+GODOT_VERSION = "3.5-stable"
 CEF_VERSION = "103.0.10+ga5c79bb+chromium-103.0.5060.114"
 
 ###############################################################################
