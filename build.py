@@ -31,7 +31,7 @@ from helper import *
 ###############################################################################
 ### Desired third part versions
 GODOT_VERSION = "3.5-stable"
-CEF_VERSION = "103.0.10+ga5c79bb+chromium-103.0.5060.114"
+CEF_VERSION = "103.0.12+g8eb56c7+chromium-103.0.5060.134"
 
 ###############################################################################
 ### Check if WORKSPACE_STIGMEE is defined as environment variable in your
