@@ -246,7 +246,8 @@ def install_godot_templates():
         # Contrary to CEF we cannot unzip while downloading.
         mkdir(TEMPLATES_PATH)
         os.chdir(TEMPLATES_PATH)
-        download(WEBSITE + "/" + TEMPLATES_TARBALL)
+        download(WEBSITE + "/" + TEMPLATES_TARBALL,
+                 os.path.join(TEMPLATES_PATH, TEMPLATES_TARBALL))
         unzip(TEMPLATES_TARBALL)
         os.rename("templates", TEMPLATE_FOLDER_NAME)
         os.remove(TEMPLATES_TARBALL)
