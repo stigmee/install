@@ -176,7 +176,7 @@ def recreate_build_dir():
 ### compilation is not difficult and we want to ensure using the whole Stigmee
 ### team use the same binary (for editing, for exporting Stigmee).
 def compile_godot_editor():
-    if valid_symlink(GODOT_EDITOR_ALIAS):
+    if valid_symlink(GODOT_EDITOR_ALIAS) and os.path.isfile(GODOT_EDITOR_ALIAS):
         info("Godot Editor already compiled !")
     else:
         os.chdir(GODOT_EDITOR_PATH)
