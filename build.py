@@ -227,11 +227,11 @@ def install_godot_templates():
 
     # From "3.4.3-stable" separate "3.4.3" and "stable" we need
     # both of them and convert the "-" to "."
-    version = GODOT_VERSION.split("-")
-    TEMPLATE_FOLDER_NAME = version[0]
-    if version[1] != None:
+    versions = GODOT_VERSION.split("-")
+    TEMPLATE_FOLDER_NAME = versions[0]
+    if len(versions) == 2:
         TEMPLATE_FOLDER_NAME += "."
-        TEMPLATE_FOLDER_NAME += version[1]
+        TEMPLATE_FOLDER_NAME += versions[1]
 
     # Download the tpz file (zip) if folder is not present
     if os.path.isdir(os.path.join(TEMPLATES_PATH, TEMPLATE_FOLDER_NAME)):
@@ -240,13 +240,14 @@ def install_godot_templates():
         info("Downloading Godot templates into " + TEMPLATES_PATH + " ...")
 
         # Where to download the zip file
-        WEBSITE = "https://downloads.tuxfamily.org/godotengine/" + version[0]
+        WEBSITE = "https://downloads.tuxfamily.org/godotengine/" + versions[0]
         TEMPLATES_TARBALL = "Godot_v" + GODOT_VERSION + "_export_templates.tpz"
 
         # Contrary to CEF we cannot unzip while downloading.
         mkdir(TEMPLATES_PATH)
         os.chdir(TEMPLATES_PATH)
-        download(WEBSITE + "/" + TEMPLATES_TARBALL)
+        download(WEBSITE + "/" + TEMPLATES_TARBALL,
+                 os.path.join(TEMPLATES_PATH, TEMPLATES_TARBALL))
         unzip(TEMPLATES_TARBALL)
         os.rename("templates", TEMPLATE_FOLDER_NAME)
         os.remove(TEMPLATES_TARBALL)
